@@ -3,6 +3,7 @@ package editor
 import (
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
+	"github.com/relaxgameing/computerGraphics/scene"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -14,38 +15,12 @@ const (
 	Stopped
 )
 
-/*
-* Canvas:
-* it is the screen which we are able to see in the compute
-* it's unit is pixels
-* it is a 2D canvas
- */
-
-type Canvas struct {
-	Width  int
-	Height int
-}
-
-/*
-*ViewPort:
-* it is the window through which we see the real world
-* it is world units
-* it is a 3D world
- */
-
-type ViewPort struct {
-	Width              int
-	Height             int
-	DistanceFromOrigin int
-}
-
 type Editor struct {
 	Id       uuid.UUID
 	Window   *sdl.Window
 	Renderer *sdl.Renderer
 
-	Canvas
-	ViewPort
+	Scene *scene.Scene
 
 	State EditorState
 }
@@ -63,6 +38,7 @@ func (e *Editor) DeInitEditor() {
 	e.Window.Destroy()
 }
 
+// Todo: Dependency Injection for configuration of Editor
 func NewEditor() *Editor {
 	window, renderer, err := sdl.CreateWindowAndRenderer(800, 600, sdl.WINDOW_SHOWN)
 	if err != nil {
@@ -78,14 +54,6 @@ func NewEditor() *Editor {
 		Window:   window,
 		Renderer: renderer,
 		State:    Active,
-		Canvas: Canvas{
-			Width:  800,
-			Height: 600,
-		},
-		ViewPort: ViewPort{
-			Width:              1,
-			Height:             1,
-			DistanceFromOrigin: 1,
-		},
+		Scene:    scene.NewScene("RayTracing"),
 	}
 }
