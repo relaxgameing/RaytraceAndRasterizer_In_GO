@@ -1,22 +1,8 @@
 package scene
 
-// viewport_size = 1 x 1
-// projection_plane_d = 1
-// sphere {
-//     center = (0, -1, 3)
-//     radius = 1
-//     color = (255, 0, 0)  # Red
-// }
-// sphere {
-//     center = (2, 0, 4)
-//     radius = 1
-//     color = (0, 0, 255)  # Blue
-// }
-// sphere {
-//     center = (-2, 0, 4)
-//     radius = 1
-//     color = (0, 255, 0)  # Green
-// }
+import (
+	"github.com/relaxgameing/computerGraphics/scene/entity"
+)
 
 type Scene struct {
 	Name string
@@ -24,7 +10,7 @@ type Scene struct {
 	Canvas
 	ViewPort
 
-	Objects []SceneObject
+	SceneEntities []entity.Entity
 }
 
 // Todo: Dependency Injection for configuration of Scene
@@ -36,11 +22,15 @@ func NewScene(sceneName string) *Scene {
 			Height: 600,
 		},
 		ViewPort: ViewPort{
-			Width:              1,
-			Height:             1,
+			Width:              2,
+			Height:             2,
 			DistanceFromOrigin: 1,
 		},
 	}
+}
+
+func (s *Scene) AddEntity(obj ...entity.Entity) {
+	s.SceneEntities = append(s.SceneEntities, obj...)
 }
 
 /*
@@ -66,15 +56,4 @@ type ViewPort struct {
 	Width              int
 	Height             int
 	DistanceFromOrigin int
-}
-
-type WorldPoint struct {
-	x int
-	y int
-	z int
-}
-
-type SceneObject interface {
-	GetOrigin() *WorldPoint
-	IsPointIntersecting(point WorldPoint) bool
 }

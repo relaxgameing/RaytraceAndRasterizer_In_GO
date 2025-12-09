@@ -1,0 +1,14 @@
+package entity
+
+import (
+	"github.com/google/uuid"
+	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/veandco/go-sdl2/sdl"
+)
+
+type Entity interface {
+	GetId() uuid.UUID
+	GetColor() sdl.Color
+	GetOrigin() geom.WorldPoint
+	IsRayIntersecting(ray geom.Ray) bool
+}

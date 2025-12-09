@@ -1,0 +1,61 @@
+package entity
+
+import (
+	"math"
+
+	"github.com/google/uuid"
+	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/veandco/go-sdl2/sdl"
+)
+
+type Sphere struct {
+	id     uuid.UUID
+	origin geom.WorldPoint
+	radius float32
+	color  sdl.Color
+}
+
+func NewSphere(origin geom.WorldPoint, radius float32, color sdl.Color) *Sphere {
+	id, _ := uuid.NewUUID()
+	return &Sphere{
+		id:     id,
+		origin: origin,
+		radius: radius,
+		color:  color,
+	}
+}
+
+func (s *Sphere) GetOrigin() geom.WorldPoint {
+	return s.origin
+}
+
+func (s *Sphere) GetId() uuid.UUID {
+	return s.id
+}
+
+func (s *Sphere) GetColor() sdl.Color {
+	return s.color
+}
+
+func (s *Sphere) IsRayIntersecting(ray geom.Ray) bool {
+	co := geom.NewVector(ray.Point, s.origin)
+
+	a := geom.DotProduct(ray.DirectionVector, ray.DirectionVector)
+	b := 2 * geom.DotProduct(*co, ray.DirectionVector)
+	c := geom.DotProduct(*co, *co) - s.radius*s.radius
+
+	discriminant := float64(b*b - 4*a*c)
+	if discriminant < 0 {
+		return false
+	}
+
+	t1 := (-b + float32(math.Sqrt(discriminant))) / (2 * a)
+	t2 := (-b - float32(math.Sqrt(discriminant))) / (2 * a)
+
+	if max(t1, t2) > 0 {
+		return true
+	}
+
+	return false
+
+}
