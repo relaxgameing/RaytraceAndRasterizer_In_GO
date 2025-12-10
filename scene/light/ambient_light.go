@@ -19,6 +19,10 @@ func (a *AmbientLight) GetType() LightType {
 	return a.style
 }
 
-func (a *AmbientLight) ComputeLightingIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32 {
+func (a *AmbientLight) ComputeDiffuseReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32 {
 	return a.intensity
+}
+
+func (a *AmbientLight) ComputeSpecularReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector, specular float32, cameraPosition geom.WorldPoint) float32 {
+	return 0
 }

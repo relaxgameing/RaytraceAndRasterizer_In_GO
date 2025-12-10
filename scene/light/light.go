@@ -12,5 +12,6 @@ const (
 
 type Light interface {
 	GetType() LightType
-	ComputeLightingIntensityOfPoint(point geom.WorldPoint, normalOfPoint geom.Vector) float32
+	ComputeDiffuseReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32
+	ComputeSpecularReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector, specular float32, cameraPosition geom.WorldPoint) float32
 }

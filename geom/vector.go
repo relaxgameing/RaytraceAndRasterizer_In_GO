@@ -26,6 +26,20 @@ func NewVector(head WorldPoint, tail WorldPoint) *Vector {
 	}
 }
 
+func (v Vector) ScalarProduct(factor float32) *Vector {
+	return &Vector{
+		WorldPoint{
+			v.X * factor,
+			v.Y * factor,
+			v.Z * factor,
+		},
+	}
+}
+
+func (v *Vector) Dot(b Vector) float32 {
+	return v.X*b.X + v.Y*b.Y + v.Z*b.Z
+}
+
 func DotProduct(a Vector, b Vector) float32 {
 	return a.X*b.X + a.Y*b.Y + a.Z*b.Z
 }

@@ -21,12 +21,13 @@ func RayTracing(e *editor.Editor) {
 
 			var intensity float32 = 1
 			var colorOfViewPort sdl.Color = sdl.Color{R: 255, G: 255, B: 255, A: 255}
+			cameraPosition := geom.WorldPoint{X: 0, Y: 0, Z: 0}
 
 			if closestEntity != nil {
 				targetPoint := curRay.GetPointOnRayWithLambda(closestEntityLambda)
 				normalVector := geom.NewVector(*targetPoint, closestEntity.GetOrigin())
 
-				intensity = computeLightIntensityAtPoint(curScene, *targetPoint, *normalVector)
+				intensity = computeLightIntensityAtPoint(curScene, *targetPoint, *normalVector, closestEntity.GetSpecularExponent(), cameraPosition)
 				colorOfViewPort = closestEntity.GetColor()
 			}
 
@@ -59,7 +60,11 @@ func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
 	return &curRay
 }
 
-func getClosestEntityOnPathOfRay(ray *geom.Ray, sceneEntities []entity.Entity) (hitEntity entity.Entity, lambda float32) {
+func getClosestEntityOnPathOfRay(
+	ray *geom.Ray,
+	sceneEntities []entity.Entity,
+) (hitEntity entity.Entity, lambda float32) {
+
 	var closestEntityLambda float32 = math.MaxFloat32
 	var closestEntity entity.Entity
 	for _, entity := range sceneEntities {
@@ -74,10 +79,18 @@ func getClosestEntityOnPathOfRay(ray *geom.Ray, sceneEntities []entity.Entity) (
 	return closestEntity, closestEntityLambda
 }
 
-func computeLightIntensityAtPoint(scene *scene.Scene, point geom.WorldPoint, normalVector geom.Vector) float32 {
+func computeLightIntensityAtPoint(
+	scene *scene.Scene,
+	point geom.WorldPoint,
+	normalVector geom.Vector,
+	specular float32,
+	cameraPosition geom.WorldPoint,
+) float32 {
+
 	var intensity float32 = 0
 	for _, lighting := range scene.Lightings {
-		intensity += lighting.ComputeLightingIntensityOfPoint(point, normalVector)
+		intensity += lighting.ComputeDiffuseReflectionIntensityOfPoint(point, normalVector)
+		intensity += lighting.ComputeSpecularReflectionIntensityOfPoint(point, normalVector, specular, cameraPosition)
 	}
 
 	return intensity
