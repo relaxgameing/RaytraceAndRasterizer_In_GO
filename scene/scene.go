@@ -2,6 +2,7 @@ package scene
 
 import (
 	"github.com/relaxgameing/computerGraphics/scene/entity"
+	"github.com/relaxgameing/computerGraphics/scene/light"
 )
 
 type Scene struct {
@@ -11,6 +12,7 @@ type Scene struct {
 	ViewPort
 
 	SceneEntities []entity.Entity
+	Lightings     []light.Light
 }
 
 // Todo: Dependency Injection for configuration of Scene
@@ -22,8 +24,8 @@ func NewScene(sceneName string) *Scene {
 			Height: 600,
 		},
 		ViewPort: ViewPort{
-			Width:              2,
-			Height:             2,
+			Width:              1,
+			Height:             1,
 			DistanceFromOrigin: 1,
 		},
 	}
@@ -31,6 +33,10 @@ func NewScene(sceneName string) *Scene {
 
 func (s *Scene) AddEntity(obj ...entity.Entity) {
 	s.SceneEntities = append(s.SceneEntities, obj...)
+}
+
+func (s *Scene) AddLighting(lights ...light.Light) {
+	s.Lightings = append(s.Lightings, lights...)
 }
 
 /*

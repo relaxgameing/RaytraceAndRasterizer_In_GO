@@ -10,5 +10,5 @@ type Entity interface {
 	GetId() uuid.UUID
 	GetColor() sdl.Color
 	GetOrigin() geom.WorldPoint
-	IsRayIntersecting(ray geom.Ray) bool
+	IsRayIntersecting(ray geom.Ray) (t float32, hit bool)
 }

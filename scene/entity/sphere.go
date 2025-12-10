@@ -37,7 +37,7 @@ func (s *Sphere) GetColor() sdl.Color {
 	return s.color
 }
 
-func (s *Sphere) IsRayIntersecting(ray geom.Ray) bool {
+func (s *Sphere) IsRayIntersecting(ray geom.Ray) (t float32, hit bool) {
 	co := geom.NewVector(ray.Point, s.origin)
 
 	a := geom.DotProduct(ray.DirectionVector, ray.DirectionVector)
@@ -46,16 +46,22 @@ func (s *Sphere) IsRayIntersecting(ray geom.Ray) bool {
 
 	discriminant := float64(b*b - 4*a*c)
 	if discriminant < 0 {
-		return false
+		return math.SmallestNonzeroFloat32, false
 	}
 
 	t1 := (-b + float32(math.Sqrt(discriminant))) / (2 * a)
 	t2 := (-b - float32(math.Sqrt(discriminant))) / (2 * a)
 
-	if max(t1, t2) > 0 {
-		return true
+	small, big := min(t1, t2), max(t1, t2)
+
+	if small >= 0 {
+		return small, true
 	}
 
-	return false
+	if big >= 0 {
+		return big, true
+	}
+
+	return math.SmallestNonzeroFloat32, false
 
 }
