@@ -1,6 +1,13 @@
 package light
 
-import "github.com/relaxgameing/computerGraphics/geom"
+import (
+	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/relaxgameing/computerGraphics/scene/entity"
+)
+
+const (
+	Epsilon float32 = 0.001
+)
 
 type LightType int
 
@@ -12,6 +19,7 @@ const (
 
 type Light interface {
 	GetType() LightType
+	IsPointInFov(pointToCheck geom.WorldPoint, sceneEntities []entity.Entity) bool
 	ComputeDiffuseReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32
 	ComputeSpecularReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector, specular float32, cameraPosition geom.WorldPoint) float32
 }

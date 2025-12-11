@@ -2,6 +2,7 @@ package light
 
 import (
 	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/relaxgameing/computerGraphics/scene/entity"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -17,6 +18,10 @@ func NewAmbientLight(intensity float32, color sdl.Color) *AmbientLight {
 
 func (a *AmbientLight) GetType() LightType {
 	return a.style
+}
+
+func (a *AmbientLight) IsPointInFov(pointToCheck geom.WorldPoint, sceneEntities []entity.Entity) bool {
+	return true
 }
 
 func (a *AmbientLight) ComputeDiffuseReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32 {

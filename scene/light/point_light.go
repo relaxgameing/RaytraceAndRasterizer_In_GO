@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/relaxgameing/computerGraphics/scene/entity"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -21,6 +22,25 @@ func NewPointLight(source geom.WorldPoint, intensity float32, color sdl.Color) *
 func (p *PointLight) GetType() LightType {
 	return p.style
 }
+
+func (p *PointLight) IsPointInFov(pointToCheck geom.WorldPoint, sceneEntities []entity.Entity) bool {
+
+	lightRay := geom.Ray{
+		Point:           pointToCheck,
+		Lambda:          1,
+		DirectionVector: *geom.NewVector(p.source, pointToCheck),
+	}
+
+	for _, entity := range sceneEntities {
+		t, hit := entity.IsRayIntersecting(lightRay)
+		if hit && Epsilon < t && t <= 1 {
+			return false
+		}
+	}
+
+	return true
+}
+
 func (p *PointLight) ComputeDiffuseReflectionIntensityOfPoint(point geom.WorldPoint, normalVectorOfPoint geom.Vector) float32 {
 	lightVector := geom.NewVector(p.source, point)
 	dot := geom.DotProduct(normalVectorOfPoint, *lightVector)

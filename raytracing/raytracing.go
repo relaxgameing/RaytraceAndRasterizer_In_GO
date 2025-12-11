@@ -89,8 +89,11 @@ func computeLightIntensityAtPoint(
 
 	var intensity float32 = 0
 	for _, lighting := range scene.Lightings {
-		intensity += lighting.ComputeDiffuseReflectionIntensityOfPoint(point, normalVector)
-		intensity += lighting.ComputeSpecularReflectionIntensityOfPoint(point, normalVector, specular, cameraPosition)
+
+		if lighting.IsPointInFov(point, scene.SceneEntities) {
+			intensity += lighting.ComputeDiffuseReflectionIntensityOfPoint(point, normalVector)
+			intensity += lighting.ComputeSpecularReflectionIntensityOfPoint(point, normalVector, specular, cameraPosition)
+		}
 	}
 
 	return intensity
