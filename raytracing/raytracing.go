@@ -51,7 +51,7 @@ func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
 			X: s.MainCamera.Position.X + vx,
 			Y: s.MainCamera.Position.Y + vy,
 			Z: s.MainCamera.Position.Z + s.ViewPort.DistanceFromCamera},
-			s.MainCamera.Position),
+			s.MainCamera.Position).Rotate(&s.MainCamera.Rotation),
 	}
 
 	return &curRay

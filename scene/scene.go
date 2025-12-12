@@ -31,8 +31,8 @@ func NewScene(sceneName string) *Scene {
 			DistanceFromCamera: 1,
 		},
 		MainCamera: &Camera{
-			Position:      geom.WorldPoint{X: 0, Y: 0, Z: 0},
-			ViewDirection: geom.Vector{WorldPoint: geom.WorldPoint{X: 0, Y: 0, Z: 1}},
+			Position: geom.WorldPoint{X: 0, Y: 0, Z: 0},
+			Rotation: geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
 		},
 	}
 }
@@ -79,5 +79,5 @@ type Camera struct {
 	Position geom.WorldPoint
 
 	//* ViewDirection is a unit vector in the direction where the camera is seeing
-	ViewDirection geom.Vector
+	Rotation geom.Rotation
 }

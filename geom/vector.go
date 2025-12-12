@@ -51,3 +51,37 @@ func (v *Vector) MirrorReflectVector(vectorToReflect Vector) *Vector {
 func (v *Vector) UnitVector() *Vector {
 	return v.ScalarProduct(1 / v.Magnitude())
 }
+
+func (v *Vector) Rotate(rotation *Rotation) *Vector {
+	v.ChangePitch(rotation.Pitch).
+		ChangeRoll(rotation.Roll).
+		ChangeYaw(rotation.Yaw)
+	return v
+}
+
+func (v *Vector) ChangeYaw(degree float32) *Vector {
+	radian := DegreeToRadian(degree)
+	cosVal := float32(math.Cos(float64(radian)))
+	sinVal := float32(math.Sin(float64(radian)))
+	v.X = v.X*cosVal + v.Z*sinVal
+	v.Z = v.X*sinVal*(-1) + v.Z*cosVal
+	return v
+}
+
+func (v *Vector) ChangePitch(degree float32) *Vector {
+	radian := DegreeToRadian(degree)
+	cosVal := float32(math.Cos(float64(radian)))
+	sinVal := float32(math.Sin(float64(radian)))
+	v.Y = v.Y*cosVal + (-1)*v.Z*sinVal
+	v.Z = v.Y*sinVal + v.Z*cosVal
+	return v
+}
+
+func (v *Vector) ChangeRoll(degree float32) *Vector {
+	radian := DegreeToRadian(degree)
+	cosVal := float32(math.Cos(float64(radian)))
+	sinVal := float32(math.Sin(float64(radian)))
+	v.X = v.X*cosVal + (-1)*v.Y*sinVal
+	v.Y = v.X*sinVal + v.Y*cosVal
+	return v
+}

@@ -106,6 +106,19 @@ func main() {
 				e.Scene.MainCamera.Position.Y--
 			case "E":
 				e.Scene.MainCamera.Position.Y++
+
+			case "Left":
+				e.Scene.MainCamera.Rotation.Yaw += geom.DegreeToRadian(-45)
+			case "Right":
+				e.Scene.MainCamera.Rotation.Yaw += geom.DegreeToRadian(45)
+			case "Up":
+				e.Scene.MainCamera.Rotation.Pitch += geom.DegreeToRadian(-45)
+			case "Down":
+				e.Scene.MainCamera.Rotation.Pitch += geom.DegreeToRadian(45)
+			case "J":
+				e.Scene.MainCamera.Rotation.Roll += geom.DegreeToRadian(45)
+			case "L":
+				e.Scene.MainCamera.Rotation.Roll += geom.DegreeToRadian(-45)
 			}
 			raytracing.RayTracing(e)
 		},
