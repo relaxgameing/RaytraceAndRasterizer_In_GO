@@ -36,6 +36,7 @@ func main() {
 			1,
 			ColorRed,
 			500,
+			0.3,
 		),
 		entity.NewSphere(
 			geom.WorldPoint{
@@ -46,6 +47,7 @@ func main() {
 			1,
 			ColorBlue,
 			500,
+			0.3,
 		),
 		entity.NewSphere(
 			geom.WorldPoint{
@@ -56,6 +58,7 @@ func main() {
 			1,
 			ColorGreen,
 			10,
+			0.4,
 		),
 		entity.NewSphere(
 			geom.WorldPoint{
@@ -66,6 +69,7 @@ func main() {
 			5000,
 			ColorYellow,
 			1000,
+			0.5,
 		),
 	)
 

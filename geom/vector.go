@@ -43,3 +43,11 @@ func (v *Vector) Dot(b Vector) float32 {
 func DotProduct(a Vector, b Vector) float32 {
 	return a.X*b.X + a.Y*b.Y + a.Z*b.Z
 }
+
+func (v *Vector) MirrorReflectVector(vectorToReflect Vector) *Vector {
+	return NewVector(v.ScalarProduct(2*v.Dot(vectorToReflect)).WorldPoint, vectorToReflect.WorldPoint)
+}
+
+func (v *Vector) UnitVector() *Vector {
+	return v.ScalarProduct(1 / v.Magnitude())
+}

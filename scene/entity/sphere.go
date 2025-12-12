@@ -9,21 +9,23 @@ import (
 )
 
 type Sphere struct {
-	id       uuid.UUID
-	origin   geom.WorldPoint
-	radius   float32
-	color    sdl.Color
-	specular float32
+	id             uuid.UUID
+	origin         geom.WorldPoint
+	radius         float32
+	color          sdl.Color
+	specular       float32
+	reflectiveness float32
 }
 
-func NewSphere(origin geom.WorldPoint, radius float32, color sdl.Color, specular float32) *Sphere {
+func NewSphere(origin geom.WorldPoint, radius float32, color sdl.Color, specular float32, reflectiveness float32) *Sphere {
 	id, _ := uuid.NewUUID()
 	return &Sphere{
-		id:       id,
-		origin:   origin,
-		radius:   radius,
-		specular: specular,
-		color:    color,
+		id:             id,
+		origin:         origin,
+		radius:         radius,
+		specular:       specular,
+		color:          color,
+		reflectiveness: reflectiveness,
 	}
 }
 
@@ -41,6 +43,10 @@ func (s *Sphere) GetColor() sdl.Color {
 
 func (s *Sphere) GetSpecularExponent() float32 {
 	return s.specular
+}
+
+func (s *Sphere) GetReflectiveCoefficient() float32 {
+	return s.reflectiveness
 }
 
 func (s *Sphere) IsRayIntersecting(ray geom.Ray) (t float32, hit bool) {

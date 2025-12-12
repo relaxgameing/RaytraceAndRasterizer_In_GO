@@ -7,6 +7,7 @@ import (
 	"github.com/relaxgameing/computerGraphics/geom"
 	"github.com/relaxgameing/computerGraphics/scene"
 	"github.com/relaxgameing/computerGraphics/scene/entity"
+	"github.com/relaxgameing/computerGraphics/scene/light"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -17,30 +18,27 @@ func RayTracing(e *editor.Editor) {
 		for j := -curScene.Canvas.Height / 2; j <= curScene.Canvas.Height/2; j++ {
 			curRay := generateViewPortRay(curScene, i, j)
 
-			closestEntity, closestEntityLambda := getClosestEntityOnPathOfRay(curRay, curScene.SceneEntities)
-
-			var intensity float32 = 1
-			var colorOfViewPort sdl.Color = sdl.Color{R: 255, G: 255, B: 255, A: 255}
-			cameraPosition := geom.WorldPoint{X: 0, Y: 0, Z: 0}
-
-			if closestEntity != nil {
-				targetPoint := curRay.GetPointOnRayWithLambda(closestEntityLambda)
-				normalVector := geom.NewVector(*targetPoint, closestEntity.GetOrigin())
-
-				intensity = computeLightIntensityAtPoint(curScene, *targetPoint, *normalVector, closestEntity.GetSpecularExponent(), cameraPosition)
-				colorOfViewPort = closestEntity.GetColor()
-			}
+			colorOfViewPort := traceRay(curRay, curScene, 3)
 
 			e.Renderer.SetDrawColor(
-				uint8(min(255, intensity*float32(colorOfViewPort.R))),
-				uint8(min(255, intensity*float32(colorOfViewPort.G))),
-				uint8(min(255, intensity*float32(colorOfViewPort.B))),
-				uint8(min(255, intensity*float32(colorOfViewPort.A))))
+				uint8(min(255, float32(colorOfViewPort.R))),
+				uint8(min(255, float32(colorOfViewPort.G))),
+				uint8(min(255, float32(colorOfViewPort.B))),
+				uint8(min(255, float32(colorOfViewPort.A))))
 			pi, pj := curScene.CanvasToSdl(i, j)
 			e.Renderer.DrawPoint(int32(pi), int32(pj))
 		}
 	}
 	e.Renderer.Present()
+}
+
+func ScalarProductColor(color sdl.Color, factor float32) *sdl.Color {
+	return &sdl.Color{
+		R: uint8(min(255, factor*float32(color.R))),
+		G: uint8(min(255, factor*float32(color.G))),
+		B: uint8(min(255, factor*float32(color.B))),
+		A: uint8(min(255, factor*float32(color.A))),
+	}
 }
 
 func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
@@ -60,6 +58,46 @@ func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
 	return &curRay
 }
 
+func traceRay(ray *geom.Ray, curScene *scene.Scene, rayDept int) (color sdl.Color) {
+	var colorOfViewPort sdl.Color = sdl.Color{R: 0, G: 0, B: 0, A: 0}
+
+	if rayDept == 0 {
+		return sdl.Color{0, 0, 0, 0}
+	}
+
+	closestEntity, closestEntityLambda := getClosestEntityOnPathOfRay(ray, curScene.SceneEntities)
+	if closestEntity == nil {
+		return colorOfViewPort
+	}
+
+	targetPoint := ray.GetPointOnRayWithLambda(closestEntityLambda)
+	normalVector := geom.NewVector(*targetPoint, closestEntity.GetOrigin())
+
+	intensity := computeLightIntensityAtPoint(curScene, *targetPoint, *normalVector, closestEntity.GetSpecularExponent(), ray.Point)
+	curColor := *ScalarProductColor(closestEntity.GetColor(), intensity)
+
+	if closestEntity.GetReflectiveCoefficient() <= 0 {
+		return curColor
+	}
+
+	reflectionRay := geom.Ray{
+		Point:           *targetPoint,
+		Lambda:          1,
+		DirectionVector: *normalVector.MirrorReflectVector(*ray.DirectionVector.ScalarProduct(-1)),
+	}
+	reflectionColor := traceRay(&reflectionRay, curScene, rayDept-1)
+	reflectiveness := closestEntity.GetReflectiveCoefficient()
+
+	return sdl.Color{
+		R: uint8(min(255, (1-reflectiveness)*float32(curColor.R)+
+			reflectiveness*float32(reflectionColor.R))),
+		G: uint8(min(255, (1-reflectiveness)*float32(curColor.G)+reflectiveness*float32(reflectionColor.G))),
+		B: uint8(min(255, (1-reflectiveness)*float32(curColor.B)+reflectiveness*float32(reflectionColor.B))),
+		A: uint8(min(255, (1-reflectiveness)*float32(curColor.A)+reflectiveness*float32(reflectionColor.A))),
+	}
+
+}
+
 func getClosestEntityOnPathOfRay(
 	ray *geom.Ray,
 	sceneEntities []entity.Entity,
@@ -69,7 +107,7 @@ func getClosestEntityOnPathOfRay(
 	var closestEntity entity.Entity
 	for _, entity := range sceneEntities {
 		if t, hit := entity.IsRayIntersecting(*ray); hit {
-			if t < closestEntityLambda {
+			if t < closestEntityLambda && t > light.Epsilon {
 				closestEntityLambda = t
 				closestEntity = entity
 			}

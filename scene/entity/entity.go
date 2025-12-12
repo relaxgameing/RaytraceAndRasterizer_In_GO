@@ -11,5 +11,6 @@ type Entity interface {
 	GetColor() sdl.Color
 	GetOrigin() geom.WorldPoint
 	GetSpecularExponent() float32
+	GetReflectiveCoefficient() float32
 	IsRayIntersecting(ray geom.Ray) (t float32, hit bool)
 }
