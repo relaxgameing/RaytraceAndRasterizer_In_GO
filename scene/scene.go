@@ -1,6 +1,7 @@
 package scene
 
 import (
+	"github.com/relaxgameing/computerGraphics/geom"
 	"github.com/relaxgameing/computerGraphics/scene/entity"
 	"github.com/relaxgameing/computerGraphics/scene/light"
 )
@@ -10,6 +11,7 @@ type Scene struct {
 
 	Canvas
 	ViewPort
+	MainCamera *Camera
 
 	SceneEntities []entity.Entity
 	Lightings     []light.Light
@@ -26,7 +28,11 @@ func NewScene(sceneName string) *Scene {
 		ViewPort: ViewPort{
 			Width:              1,
 			Height:             1,
-			DistanceFromOrigin: 1,
+			DistanceFromCamera: 1,
+		},
+		MainCamera: &Camera{
+			Position:      geom.WorldPoint{X: 0, Y: 0, Z: 0},
+			ViewDirection: geom.Vector{WorldPoint: geom.WorldPoint{X: 0, Y: 0, Z: 1}},
 		},
 	}
 }
@@ -61,5 +67,17 @@ type Canvas struct {
 type ViewPort struct {
 	Width              int
 	Height             int
-	DistanceFromOrigin int
+	DistanceFromCamera float32
+}
+
+/*
+*	Camera:
+*	it is our eye through which we can see the scene
+ */
+type Camera struct {
+	//* this is the position of the camera in the scene
+	Position geom.WorldPoint
+
+	//* ViewDirection is a unit vector in the direction where the camera is seeing
+	ViewDirection geom.Vector
 }

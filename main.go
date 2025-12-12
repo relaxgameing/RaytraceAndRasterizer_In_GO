@@ -88,6 +88,27 @@ func main() {
 			raytracing.RayTracing(e)
 			log.Info("RayTracing - Complete")
 		},
+		sdl.KEYDOWN: func(event sdl.Event) {
+			keyEvent := event.(*sdl.KeyboardEvent)
+
+			log.Info("Keyboard Event Detected", "event", sdl.GetKeyName(keyEvent.Keysym.Sym))
+
+			switch sdl.GetKeyName(keyEvent.Keysym.Sym) {
+			case "W":
+				e.Scene.MainCamera.Position.Z++
+			case "A":
+				e.Scene.MainCamera.Position.X--
+			case "S":
+				e.Scene.MainCamera.Position.Z--
+			case "D":
+				e.Scene.MainCamera.Position.X++
+			case "Q":
+				e.Scene.MainCamera.Position.Y--
+			case "E":
+				e.Scene.MainCamera.Position.Y++
+			}
+			raytracing.RayTracing(e)
+		},
 	})
 
 }
