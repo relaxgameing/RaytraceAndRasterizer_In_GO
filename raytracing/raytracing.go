@@ -12,7 +12,7 @@ import (
 )
 
 func RayTracing(e *editor.Editor) {
-	curScene := e.Scene
+	curScene := e.Scene.(*scene.Scene)
 
 	for i := -curScene.Canvas.Width / 2; i <= curScene.Canvas.Width/2; i++ {
 		for j := -curScene.Canvas.Height / 2; j <= curScene.Canvas.Height/2; j++ {

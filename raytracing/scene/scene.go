@@ -31,6 +31,10 @@ func NewScene(sceneName string) *Scene {
 	}
 }
 
+func (s *Scene) SetSceneName(name string) {
+	s.Name = name
+}
+
 func (s *Scene) AddEntity(obj ...entity.Entity) {
 	s.SceneEntities = append(s.SceneEntities, obj...)
 }
