@@ -1,6 +1,8 @@
 package geom
 
-import "math"
+import (
+	"math"
+)
 
 type Vector struct {
 	WorldPoint
@@ -12,8 +14,10 @@ type WorldPoint struct {
 	Z float32
 }
 
-func (v *Vector) Magnitude() float32 {
-	return float32(math.Sqrt(float64(v.X*v.X) + float64(v.Y*v.Y) + float64(v.Z*v.Z)))
+func (w WorldPoint) ToVector() *Vector {
+	return &Vector{
+		WorldPoint: w,
+	}
 }
 
 func NewVector(head WorldPoint, tail WorldPoint) *Vector {
@@ -26,6 +30,10 @@ func NewVector(head WorldPoint, tail WorldPoint) *Vector {
 	}
 }
 
+func (v *Vector) Magnitude() float32 {
+	return float32(math.Sqrt(float64(v.X*v.X) + float64(v.Y*v.Y) + float64(v.Z*v.Z)))
+}
+
 func (v Vector) ScalarProduct(factor float32) *Vector {
 	return &Vector{
 		WorldPoint{
@@ -34,6 +42,13 @@ func (v Vector) ScalarProduct(factor float32) *Vector {
 			v.Z * factor,
 		},
 	}
+}
+
+func (v *Vector) Add(a Vector) *Vector {
+	v.X += a.X
+	v.Y += a.Y
+	v.Z += a.Z
+	return v
 }
 
 func (v *Vector) Dot(b Vector) float32 {
@@ -52,36 +67,44 @@ func (v *Vector) UnitVector() *Vector {
 	return v.ScalarProduct(1 / v.Magnitude())
 }
 
-func (v *Vector) Rotate(rotation *Rotation) *Vector {
-	v.ChangePitch(rotation.Pitch).
-		ChangeRoll(rotation.Roll).
-		ChangeYaw(rotation.Yaw)
+// * Rotates the vector By the given rotation
+// ? NOTE: Modifies Caller Instance
+func (v *Vector) Rotate(rotation Rotation) *Vector {
+	v.ChangePitch(float64(rotation.Pitch)).
+		ChangeRoll(float64(rotation.Roll)).
+		ChangeYaw(float64(rotation.Yaw))
 	return v
 }
 
-func (v *Vector) ChangeYaw(degree float32) *Vector {
+func (v *Vector) ChangeYaw(degree float64) *Vector {
 	radian := DegreeToRadian(degree)
 	cosVal := float32(math.Cos(float64(radian)))
 	sinVal := float32(math.Sin(float64(radian)))
-	v.X = v.X*cosVal + v.Z*sinVal
-	v.Z = v.X*sinVal*(-1) + v.Z*cosVal
+	newX := v.X*cosVal + v.Z*sinVal
+	newZ := -v.X*sinVal + v.Z*cosVal
+	v.X = newX
+	v.Z = newZ
 	return v
 }
 
-func (v *Vector) ChangePitch(degree float32) *Vector {
+func (v *Vector) ChangePitch(degree float64) *Vector {
 	radian := DegreeToRadian(degree)
 	cosVal := float32(math.Cos(float64(radian)))
 	sinVal := float32(math.Sin(float64(radian)))
-	v.Y = v.Y*cosVal + (-1)*v.Z*sinVal
-	v.Z = v.Y*sinVal + v.Z*cosVal
+	newY := v.Y*cosVal - v.Z*sinVal
+	newZ := v.Y*sinVal + v.Z*cosVal
+	v.Y = newY
+	v.Z = newZ
 	return v
 }
 
-func (v *Vector) ChangeRoll(degree float32) *Vector {
+func (v *Vector) ChangeRoll(degree float64) *Vector {
 	radian := DegreeToRadian(degree)
 	cosVal := float32(math.Cos(float64(radian)))
 	sinVal := float32(math.Sin(float64(radian)))
-	v.X = v.X*cosVal + (-1)*v.Y*sinVal
-	v.Y = v.X*sinVal + v.Y*cosVal
+	newX := v.X*cosVal + (-1)*v.Y*sinVal
+	newY := v.X*sinVal + v.Y*cosVal
+	v.X = newX
+	v.Y = newY
 	return v
 }

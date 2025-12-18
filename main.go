@@ -74,7 +74,7 @@ func main() {
 	)
 
 	e.Scene.AddLighting(
-		light.NewAmbientLight(0.2, ColorWhite),
+		light.NewAmbientLight(0.1, ColorWhite),
 		light.NewPointLight(geom.WorldPoint{X: 2, Y: 1, Z: 0}, 0.6, ColorWhite),
 		light.NewDirectionalLight(geom.Vector{WorldPoint: geom.WorldPoint{X: 1, Y: 4, Z: 4}}, 0.2, ColorWhite),
 	)
@@ -95,32 +95,76 @@ func main() {
 
 			switch sdl.GetKeyName(keyEvent.Keysym.Sym) {
 			case "W":
-				e.Scene.MainCamera.Position.Z++
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(direction)
 			case "A":
-				e.Scene.MainCamera.Position.X--
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(*direction.ChangeYaw(-90))
 			case "S":
-				e.Scene.MainCamera.Position.Z--
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(*direction.ChangeYaw(180))
 			case "D":
-				e.Scene.MainCamera.Position.X++
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(*direction.ChangeYaw(90))
 			case "Q":
-				e.Scene.MainCamera.Position.Y--
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(*direction.ChangePitch(-90))
 			case "E":
-				e.Scene.MainCamera.Position.Y++
+				direction := e.Scene.MainCamera.GetDirection()
+				e.Scene.MainCamera.MoveCameraBy(*direction.ChangePitch(90))
 
 			case "Left":
-				e.Scene.MainCamera.Rotation.Yaw += geom.DegreeToRadian(-45)
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: 0,
+						Yaw:   float32(geom.DegreeToRadian(-90)),
+						Roll:  0,
+					},
+				)
 			case "Right":
-				e.Scene.MainCamera.Rotation.Yaw += geom.DegreeToRadian(45)
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: 0,
+						Yaw:   float32(geom.DegreeToRadian(90)),
+						Roll:  0,
+					},
+				)
 			case "Up":
-				e.Scene.MainCamera.Rotation.Pitch += geom.DegreeToRadian(-45)
+
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: float32(geom.DegreeToRadian(45)),
+						Yaw:   0,
+						Roll:  0,
+					},
+				)
 			case "Down":
-				e.Scene.MainCamera.Rotation.Pitch += geom.DegreeToRadian(45)
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: float32(geom.DegreeToRadian(-45)),
+						Yaw:   0,
+						Roll:  0,
+					},
+				)
 			case "J":
-				e.Scene.MainCamera.Rotation.Roll += geom.DegreeToRadian(45)
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: 0,
+						Yaw:   0,
+						Roll:  float32(geom.DegreeToRadian(45)),
+					},
+				)
 			case "L":
-				e.Scene.MainCamera.Rotation.Roll += geom.DegreeToRadian(-45)
+				e.Scene.MainCamera.RotateCameraBy(
+					geom.Rotation{
+						Pitch: 0,
+						Yaw:   0,
+						Roll:  float32(geom.DegreeToRadian(-45)),
+					},
+				)
 			}
 			raytracing.RayTracing(e)
+			log.Info("Camera", "position", e.Scene.MainCamera.GetPosition(), "direction", e.Scene.MainCamera.GetRotation())
 		},
 	})
 
