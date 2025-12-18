@@ -4,10 +4,10 @@ import (
 	"math"
 
 	"github.com/relaxgameing/computerGraphics/editor"
-	"github.com/relaxgameing/computerGraphics/geom"
-	"github.com/relaxgameing/computerGraphics/scene"
-	"github.com/relaxgameing/computerGraphics/scene/entity"
-	"github.com/relaxgameing/computerGraphics/scene/light"
+	"github.com/relaxgameing/computerGraphics/raytracing/geom"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
 	"github.com/veandco/go-sdl2/sdl"
 )
 

@@ -1,8 +1,8 @@
 package scene
 
 import (
-	"github.com/relaxgameing/computerGraphics/scene/entity"
-	"github.com/relaxgameing/computerGraphics/scene/light"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
 )
 
 type Scene struct {

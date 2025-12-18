@@ -3,7 +3,7 @@ package editor
 import (
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
-	"github.com/relaxgameing/computerGraphics/scene"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
