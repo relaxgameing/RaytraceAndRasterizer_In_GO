@@ -4,8 +4,11 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	"github.com/relaxgameing/computerGraphics/common"
 	"github.com/relaxgameing/computerGraphics/editor"
+	"github.com/relaxgameing/computerGraphics/rasterization/geom"
 	rsScene "github.com/relaxgameing/computerGraphics/rasterization/scene"
+	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 	rayScene "github.com/relaxgameing/computerGraphics/raytracing/scene"
 )
 
@@ -19,14 +22,24 @@ type OptionRequirement struct {
 }
 
 func NewRayTracingRequirements() *OptionRequirement {
+	scene := rayScene.NewScene("raytracing")
 	return &OptionRequirement{
-		scene: rayScene.NewScene("raytracing"),
+		scene: scene,
 	}
 }
 
 func NewRasterizationRequirements() *OptionRequirement {
+	scene := rsScene.NewScene()
+	scene.AddSceneEntities(
+		// shape.NewLine(geom.Point{-10, -100}, geom.Point{10, 100},
+		// 	shape.WithColor(common.ColorBlue)),
+		shape.NewLine(geom.Point{-200, -100}, geom.Point{240, 120},
+			shape.WithColor(common.ColorBlue)),
+		shape.NewLine(geom.Point{-50, -200}, geom.Point{60, 240},
+			shape.WithColor(common.ColorRed)),
+	)
 	return &OptionRequirement{
-		scene: rsScene.NewScene("rasterization"),
+		scene: scene,
 	}
 }
 

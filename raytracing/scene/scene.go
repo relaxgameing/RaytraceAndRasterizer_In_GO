@@ -35,8 +35,15 @@ func (s *Scene) SetSceneName(name string) {
 	s.Name = name
 }
 
-func (s *Scene) AddEntity(obj ...entity.Entity) {
-	s.SceneEntities = append(s.SceneEntities, obj...)
+func (s *Scene) GetWidth() int {
+	return s.Canvas.Width
+}
+
+func (s *Scene) GetHeight() int {
+	return s.Canvas.Height
+}
+func (s *Scene) AddSceneEntities(entities ...entity.Entity) {
+	s.SceneEntities = append(s.SceneEntities, entities...)
 }
 
 func (s *Scene) AddLighting(lights ...light.Light) {
