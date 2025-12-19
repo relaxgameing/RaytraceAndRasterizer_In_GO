@@ -10,3 +10,12 @@ var (
 	ColorWhite  = sdl.Color{R: 255, G: 255, B: 255, A: 255}
 	ColorBlack  = sdl.Color{R: 0, G: 0, B: 0, A: 0}
 )
+
+func ChangeColorIntensity(color sdl.Color, intensity float32) sdl.Color {
+	return sdl.Color{
+		R: uint8(float32(color.R) * intensity),
+		G: uint8(float32(color.G) * intensity),
+		B: uint8(float32(color.B) * intensity),
+		A: uint8(float32(color.A) * intensity),
+	}
+}

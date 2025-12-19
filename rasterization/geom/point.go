@@ -3,14 +3,30 @@ package geom
 import "math"
 
 type Point struct {
-	X int
-	Y int
+	X         int
+	Y         int
+	Intensity float32
 }
 
-func NewPoint(x int, y int) *Point {
-	return &Point{
+type PointOption func(*Point)
+
+func NewPoint(x int, y int, options ...PointOption) *Point {
+	p := &Point{
 		x,
 		y,
+		1,
+	}
+
+	for _, op := range options {
+		op(p)
+	}
+
+	return p
+}
+
+func PointWithIntensity(intensity float32) PointOption {
+	return func(p *Point) {
+		p.Intensity = intensity
 	}
 }
 

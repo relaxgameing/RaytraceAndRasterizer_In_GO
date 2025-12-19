@@ -31,7 +31,10 @@ func NewRayTracingRequirements() *OptionRequirement {
 func NewRasterizationRequirements() *OptionRequirement {
 	scene := rsScene.NewScene()
 	scene.AddSceneEntities(
-		shape.NewTriangle(geom.Point{-200, -250}, geom.Point{200, 50}, geom.Point{20, 250}).WithColor(common.ColorGreen),
+		shape.NewTriangle(
+			*geom.NewPoint(-200, -250, geom.PointWithIntensity(0.5)),
+			*geom.NewPoint(200, 50, geom.PointWithIntensity(0)),
+			*geom.NewPoint(20, 250, geom.PointWithIntensity(1))).WithColor(common.ColorGreen),
 	)
 	return &OptionRequirement{
 		scene: scene,

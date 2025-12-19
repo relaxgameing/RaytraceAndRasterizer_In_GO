@@ -81,12 +81,14 @@ func (l *Line) Draw() []*geom.Point {
 	points = append(points, &geom.Point{X: l.end.X, Y: l.end.Y})
 	// more vertical
 	if math.Abs(float64(l.slope)) > 1 {
-		l, r := geom.UpperPoint(l.start, l.end)
-		temp := geom.InterpolateAlongLine(l.Y, l.X, r.Y, r.X)
-		for _, p := range temp {
+		upper, lower := geom.UpperPoint(l.start, l.end)
+		lineXVal := geom.InterpolateAlongLine(lower.Y, lower.X, upper.Y, upper.X)
+		intensities := geom.InterpolateAlongLine(float32(lower.Y), lower.Intensity, float32(upper.Y), upper.Intensity)
+		for i, p := range lineXVal {
 			points = append(points, &geom.Point{
-				X: p.Y,
-				Y: p.X,
+				X:         int(p),
+				Y:         lower.Y + i,
+				Intensity: intensities[i],
 			})
 		}
 		return points
@@ -94,10 +96,12 @@ func (l *Line) Draw() []*geom.Point {
 
 	left, right := geom.LeftPoint(l.start, l.end)
 	temp := geom.InterpolateAlongLine(left.X, left.Y, right.X, right.Y)
-	for _, p := range temp {
+	intensities := geom.InterpolateAlongLine(float32(left.X), left.Intensity, float32(right.X), right.Intensity)
+	for i, p := range temp {
 		points = append(points, &geom.Point{
-			X: p.X,
-			Y: p.Y,
+			X:         left.X + i,
+			Y:         int(p),
+			Intensity: intensities[i],
 		})
 	}
 	return points

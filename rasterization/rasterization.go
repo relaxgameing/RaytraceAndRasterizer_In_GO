@@ -14,12 +14,13 @@ func Rasterization(e *editor.Editor) {
 	e.Renderer.Clear()
 	for _, shape := range curScene.GetShapes() {
 		curColor := shape.GetColor()
-		setRendererDrawColor(e.Renderer, curColor)
 		// x, y := curScene.CanvasToSdl(-50, -200)
 		// a, b := curScene.CanvasToSdl(60, 240)
 		// e.Renderer.DrawLine(int32(x), int32(y), int32(a), int32(b))
 		for _, p := range shape.Draw() {
 			x, y := curScene.CanvasToSdl(p.X, p.Y)
+			intensityColor := common.ChangeColorIntensity(curColor, p.Intensity)
+			setRendererDrawColor(e.Renderer, intensityColor)
 			e.Renderer.DrawPoint(int32(x), int32(y))
 		}
 	}

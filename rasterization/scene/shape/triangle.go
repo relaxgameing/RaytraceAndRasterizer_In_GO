@@ -43,9 +43,9 @@ func (t *Triangle) Draw() []*geom.Point {
 	trianglePoints := make([]*geom.Point, 0)
 
 	// Outline
-	trianglePoints = append(trianglePoints, NewLine(t.a, t.b, WithColor(t.color)).Draw()...)
-	trianglePoints = append(trianglePoints, NewLine(t.a, t.c, WithColor(t.color)).Draw()...)
-	trianglePoints = append(trianglePoints, NewLine(t.c, t.b, WithColor(t.color)).Draw()...)
+	trianglePoints = append(trianglePoints, NewLine(t.a, t.b).Draw()...)
+	trianglePoints = append(trianglePoints, NewLine(t.a, t.c).Draw()...)
+	trianglePoints = append(trianglePoints, NewLine(t.c, t.b).Draw()...)
 	log.Info("Triangle", "len of outline", len(trianglePoints))
 
 	trianglePoints = append(trianglePoints, t.fillTriangle()...)
@@ -60,21 +60,30 @@ func (t *Triangle) fillTriangle() []*geom.Point {
 	top, z := geom.UpperPoint(x, t.c)
 	mid, bottom := geom.UpperPoint(y, z)
 
-	topMidSide := NewLine(top, mid)
-	topBottomSide := NewLine(top, bottom)
 	// top -> mid
-	for i := top.Y; i >= mid.Y; i-- {
-		midSidePoint := geom.Point{X: int(topMidSide.ComputeXForY(i)), Y: i}
-		bottomSidePoint := geom.Point{X: int(topBottomSide.ComputeXForY(i)), Y: i}
-		points = append(points, NewLine(midSidePoint, bottomSidePoint).Draw()...)
-	}
+	topMidSidePoints := geom.InterpolateAlongLine(mid.Y, mid.X, top.Y, top.X)
+	intensitiesOfTopMid := geom.InterpolateAlongLine(float32(mid.Y), mid.Intensity, float32(top.Y), top.Intensity)
 
-	// mid -> bottom
-	midBottomSide := NewLine(mid, bottom)
-	for i := mid.Y; i >= bottom.Y; i-- {
-		topBottomSidePoint := geom.NewPoint(int(topBottomSide.ComputeXForY(i)), i)
-		midBottomSidePoint := geom.NewPoint(int(midBottomSide.ComputeXForY(i)), i)
-		points = append(points, NewLine(*topBottomSidePoint, *midBottomSidePoint).Draw()...)
+	topBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, top.Y, top.X)
+	intensitiesOfTopBottom := geom.InterpolateAlongLine(float32(bottom.Y), bottom.Intensity, float32(top.Y), top.Intensity)
+
+	midBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, mid.Y, mid.X)
+	intensitiesOfMidBottom := geom.InterpolateAlongLine(float32(bottom.Y), bottom.Intensity, float32(mid.Y), mid.Intensity)
+
+	idx := 0
+	for i := bottom.Y + 1; i < top.Y; i++ {
+		var longSidePoint, otherSidePoint geom.Point
+
+		if i > mid.Y {
+			otherSidePoint = *geom.NewPoint(int(topMidSidePoints[idx-(mid.Y-bottom.Y)]), i, geom.PointWithIntensity(intensitiesOfTopMid[idx-(mid.Y-bottom.Y)]))
+		} else {
+			otherSidePoint = *geom.NewPoint(int(midBottomSidePoints[idx]), i, geom.PointWithIntensity(intensitiesOfMidBottom[idx]))
+		}
+
+		longSidePoint = *geom.NewPoint(int(topBottomSidePoints[idx]), i, geom.PointWithIntensity(intensitiesOfTopBottom[idx]))
+
+		points = append(points, NewLine(longSidePoint, otherSidePoint).Draw()...)
+		idx++
 	}
 
 	return points
