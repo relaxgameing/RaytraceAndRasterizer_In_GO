@@ -66,6 +66,14 @@ func (l *Line) GetPoints() []geom.Point {
 	return []geom.Point{l.start, l.end}
 }
 
+func (l *Line) ComputeXForY(y int) float32 {
+	return (float32(y) - l.intercept) / l.slope
+}
+
+func (l *Line) ComputeYForX(x int) float32 {
+	return (float32(x)*l.slope + l.intercept)
+}
+
 // * shape Interface
 func (l *Line) Draw() []*geom.Point {
 	points := make([]*geom.Point, 0)

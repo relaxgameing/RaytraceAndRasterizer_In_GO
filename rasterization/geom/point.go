@@ -7,6 +7,13 @@ type Point struct {
 	Y int
 }
 
+func NewPoint(x int, y int) *Point {
+	return &Point{
+		x,
+		y,
+	}
+}
+
 func DistanceFromOrigin(p Point) float32 {
 	return float32(math.Sqrt(float64(p.X*p.X) + float64(p.Y*p.Y)))
 }
@@ -21,7 +28,7 @@ func LeftPoint(p1, p2 Point) (left, right Point) {
 
 // *returns the point more towards the top
 func UpperPoint(p1, p2 Point) (upper, lower Point) {
-	if p1.Y <= p2.Y {
+	if p1.Y >= p2.Y {
 		return p1, p2
 	}
 	return p2, p1
