@@ -33,8 +33,8 @@ func NewRasterizationRequirements() *OptionRequirement {
 	scene.AddSceneEntities(
 		shape.NewTriangle(
 			*geom.NewPoint(-200, -250, geom.PointWithIntensity(0.5)),
-			*geom.NewPoint(200, 50, geom.PointWithIntensity(0)),
-			*geom.NewPoint(20, 250, geom.PointWithIntensity(1))).WithColor(common.ColorGreen),
+			*geom.NewPoint(-200, 50, geom.PointWithIntensity(1)),
+			*geom.NewPoint(20, 250, geom.PointWithIntensity(1))).WithColor(common.ColorRed),
 	)
 	return &OptionRequirement{
 		scene: scene,

@@ -41,13 +41,6 @@ func (t *Triangle) GetColor() sdl.Color {
 
 func (t *Triangle) Draw() []*geom.Point {
 	trianglePoints := make([]*geom.Point, 0)
-
-	// Outline
-	trianglePoints = append(trianglePoints, NewLine(t.a, t.b).Draw()...)
-	trianglePoints = append(trianglePoints, NewLine(t.a, t.c).Draw()...)
-	trianglePoints = append(trianglePoints, NewLine(t.c, t.b).Draw()...)
-	log.Info("Triangle", "len of outline", len(trianglePoints))
-
 	trianglePoints = append(trianglePoints, t.fillTriangle()...)
 	log.Info("Triangle", "len of filled triangle", len(trianglePoints))
 	return trianglePoints
