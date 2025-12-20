@@ -52,7 +52,7 @@ func NewRayTracingRequirements() *OptionRequirement {
 }
 
 func NewRasterizationRequirements() *OptionRequirement {
-	scene := rsScene.NewScene()
+	scene := rsScene.NewRasterScene()
 	scene.AddSceneEntities(
 		shape.NewTriangle(
 			*geom.NewPoint(-200, -250, geom.PointWithIntensity(0.5)),

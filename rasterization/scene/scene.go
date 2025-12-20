@@ -1,47 +1,37 @@
 package scene
 
-import "github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
+import (
+	"github.com/relaxgameing/computerGraphics/editor/scene"
+	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
+)
 
-type Scene struct {
-	name string
-	Canvas
-	ViewPort
-
+type RasterScene struct {
+	scene.BaseScene
 	shapes []shape.Shape
 }
 
-/*
-* Canvas:
-* it is the screen which we are able to see in the compute
-* it's unit is pixels
-* it is a 2D canvas
- */
+type sceneOptions func(s *RasterScene)
 
-type Canvas struct {
-	Width  int
-	Height int
-}
-
-/*
-*ViewPort:
-* it is the window through which we see the real world
-* it is world units
-* it is a 3D world
- */
-
-type ViewPort struct {
-	Width              int
-	Height             int
-	DistanceFromOrigin int
-}
-
-type sceneOptions func(s *Scene)
-
-func NewScene(opt ...sceneOptions) *Scene {
-	scene := &Scene{
-		name: "Rasterization",
-		Canvas: Canvas{Width: 800,
-			Height: 600},
+func NewRasterScene(opt ...sceneOptions) *RasterScene {
+	scene := &RasterScene{
+		BaseScene: scene.BaseScene{
+			Name: "Rasterization",
+			Canvas: scene.Canvas{
+				Width:  800,
+				Height: 600,
+			},
+			ViewPort: scene.ViewPort{
+				Width:              1,
+				Height:             1,
+				DistanceFromOrigin: 1,
+			},
+			ViewCamera: scene.NewCamera(
+				geom.WorldPoint{X: 0, Y: 0, Z: 0},
+				scene.InitialCameraDirection,
+				geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
+			),
+		},
 	}
 
 	for _, op := range opt {
@@ -52,46 +42,39 @@ func NewScene(opt ...sceneOptions) *Scene {
 }
 
 func WithName(name string) sceneOptions {
-	return func(s *Scene) {
-		s.name = name
+	return func(s *RasterScene) {
+		s.BaseScene.Name = name
 	}
 }
 
 func WithWidth(width int) sceneOptions {
-	return func(s *Scene) {
+	return func(s *RasterScene) {
 		s.Canvas.Width = width
 	}
 }
 func WithHeight(height int) sceneOptions {
-	return func(s *Scene) {
+	return func(s *RasterScene) {
 		s.Canvas.Height = height
 	}
 }
 
-// * Scene interface
-func (s *Scene) SetSceneName(name string) {
-	s.name = name
+// * RasterScene interface
+func (s *RasterScene) SetSceneName(name string) {
+	s.BaseScene.Name = name
 }
 
-func (s *Scene) GetCanvasWidth() int {
+func (s *RasterScene) GetCanvasWidth() int {
 	return s.Canvas.Width
 }
 
-func (s *Scene) GetCanvasHeight() int {
+func (s *RasterScene) GetCanvasHeight() int {
 	return s.Canvas.Height
 }
 
-func (s *Scene) GetShapes() []shape.Shape {
+func (s *RasterScene) GetShapes() []shape.Shape {
 	return s.shapes
 }
 
-func (s *Scene) AddSceneEntities(entities ...shape.Shape) {
+func (s *RasterScene) AddSceneEntities(entities ...shape.Shape) {
 	s.shapes = append(s.shapes, entities...)
-}
-
-func (s *Scene) CanvasToSdl(cx, cy int) (x, y int) {
-	x = (s.Canvas.Width / 2) + cx
-	y = (s.Canvas.Height / 2) - cy
-
-	return x, y
 }

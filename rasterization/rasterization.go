@@ -8,7 +8,7 @@ import (
 )
 
 func Rasterization(e *editor.Editor) {
-	curScene := e.Scene.(*scene.Scene)
+	curScene := e.Scene.(*scene.RasterScene)
 
 	setRendererDrawColor(e.Renderer, common.ColorWhite)
 	e.Renderer.Clear()

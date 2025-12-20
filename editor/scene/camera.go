@@ -1,9 +1,6 @@
 package scene
 
-import (
-	"github.com/relaxgameing/computerGraphics/geom"
-	"github.com/relaxgameing/computerGraphics/scene"
-)
+import "github.com/relaxgameing/computerGraphics/geom"
 
 var (
 	InitialCameraDirection geom.Vector = geom.Vector{WorldPoint: geom.WorldPoint{X: 0, Y: 0, Z: 1}}
@@ -27,7 +24,7 @@ type Camera struct {
 func NewCamera(position geom.WorldPoint, viewDirection geom.Vector, rotation geom.Rotation) *Camera {
 	return &Camera{
 		position:      geom.WorldPoint{X: 0, Y: 0, Z: 0},
-		viewDirection: scene.InitialCameraDirection,
+		viewDirection: InitialCameraDirection,
 		rotation:      geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
 	}
 }

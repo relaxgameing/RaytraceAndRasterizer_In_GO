@@ -12,7 +12,7 @@ import (
 )
 
 func RayTracing(e *editor.Editor) {
-	curScene := e.Scene.(*scene.Scene)
+	curScene := e.Scene.(*scene.RayScene)
 
 	for i := -curScene.Canvas.Width / 2; i <= curScene.Canvas.Width/2; i++ {
 		for j := -curScene.Canvas.Height / 2; j <= curScene.Canvas.Height/2; j++ {
@@ -41,11 +41,11 @@ func ScalarProductColor(color sdl.Color, factor float32) *sdl.Color {
 	}
 }
 
-func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
+func generateViewPortRay(s *scene.RayScene, i int, j int) *geom.Ray {
 	vx, vy := s.CanvasToViewPort(i, j)
 
-	cameraPosition := s.MainCamera.GetPosition()
-	cameraRotation := s.MainCamera.GetRotation()
+	cameraPosition := s.ViewCamera.GetPosition()
+	cameraRotation := s.ViewCamera.GetRotation()
 
 	var curRay geom.Ray = geom.Ray{
 		Point:  cameraPosition,
@@ -53,14 +53,14 @@ func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
 		DirectionVector: *geom.NewVector(geom.WorldPoint{
 			X: cameraPosition.X + vx,
 			Y: cameraPosition.Y + vy,
-			Z: cameraPosition.Z + s.ViewPort.DistanceFromCamera},
+			Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
 			cameraPosition).Rotate(cameraRotation),
 	}
 
 	return &curRay
 }
 
-func traceRay(ray *geom.Ray, curScene *scene.Scene, rayDept int) (color sdl.Color) {
+func traceRay(ray *geom.Ray, curScene *scene.RayScene, rayDept int) (color sdl.Color) {
 	var colorOfViewPort sdl.Color = sdl.Color{R: 0, G: 0, B: 0, A: 0}
 
 	if rayDept == 0 {
@@ -120,7 +120,7 @@ func getClosestEntityOnPathOfRay(
 }
 
 func computeLightIntensityAtPoint(
-	scene *scene.Scene,
+	scene *scene.RayScene,
 	point geom.WorldPoint,
 	normalVector geom.Vector,
 	specular float32,
