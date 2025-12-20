@@ -1,4 +1,4 @@
-package editor
+package scene
 
 type Scene interface {
 	SetSceneName(name string)

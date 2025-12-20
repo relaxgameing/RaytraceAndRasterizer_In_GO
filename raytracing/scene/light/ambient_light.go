@@ -1,7 +1,7 @@
 package light
 
 import (
-	"github.com/relaxgameing/computerGraphics/raytracing/geom"
+	"github.com/relaxgameing/computerGraphics/geom"
 	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
 	"github.com/veandco/go-sdl2/sdl"
 )

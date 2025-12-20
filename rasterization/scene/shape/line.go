@@ -4,7 +4,7 @@ import (
 	"math"
 
 	"github.com/relaxgameing/computerGraphics/common"
-	"github.com/relaxgameing/computerGraphics/rasterization/geom"
+	"github.com/relaxgameing/computerGraphics/geom"
 	"github.com/veandco/go-sdl2/sdl"
 )
 

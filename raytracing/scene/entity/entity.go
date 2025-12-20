@@ -2,7 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
-	"github.com/relaxgameing/computerGraphics/raytracing/geom"
+	"github.com/relaxgameing/computerGraphics/geom"
 	"github.com/veandco/go-sdl2/sdl"
 )
 

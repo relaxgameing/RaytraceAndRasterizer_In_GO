@@ -5,11 +5,13 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/relaxgameing/computerGraphics/common"
-	"github.com/relaxgameing/computerGraphics/editor"
-	"github.com/relaxgameing/computerGraphics/rasterization/geom"
+	"github.com/relaxgameing/computerGraphics/editor/scene"
+	"github.com/relaxgameing/computerGraphics/geom"
 	rsScene "github.com/relaxgameing/computerGraphics/rasterization/scene"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 	rayScene "github.com/relaxgameing/computerGraphics/raytracing/scene"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
 )
 
 const (
@@ -18,11 +20,32 @@ const (
 )
 
 type OptionRequirement struct {
-	scene editor.Scene
+	scene scene.Scene
 }
 
 func NewRayTracingRequirements() *OptionRequirement {
 	scene := rayScene.NewScene("raytracing")
+	scene.AddLighting(
+		light.NewAmbientLight(0.2, common.ColorWhite),
+		light.NewDirectionalLight(*geom.WorldPoint{1, 4, 4}.ToVector(), 0.2, common.ColorWhite),
+		light.NewPointLight(geom.WorldPoint{2, 1, 0}, 0.6, common.ColorWhite),
+	)
+	scene.AddSceneEntities(
+		entity.NewSphere(
+			geom.WorldPoint{0, -1, 3},
+			1,
+			common.ColorRed,
+			500,
+			0.2,
+		),
+		entity.NewSphere(
+			geom.WorldPoint{0, -5001, 3},
+			5000,
+			common.ColorYellow,
+			500,
+			0.2,
+		),
+	)
 	return &OptionRequirement{
 		scene: scene,
 	}
