@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/log"
 	"github.com/relaxgameing/computerGraphics/common"
 	"github.com/relaxgameing/computerGraphics/geom"
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 )
 
 type ObjParser struct {
@@ -37,7 +38,6 @@ func (obj *ObjParser) ReadModel() *Model {
 			if err == io.EOF {
 				break
 			}
-
 			log.Error("ObjParser -> ReadModel", "err", err)
 			return nil
 		}
@@ -61,13 +61,13 @@ func (obj *ObjParser) ReadModel() *Model {
 }
 
 // v x y z [w]
-func (obj *ObjParser) parseVertex(vertexLine string) geom.WorldPoint {
+func (obj *ObjParser) parseVertex(vertexLine string) homocoord.Vec4 {
 	args := strings.Fields(vertexLine)
 	x, _ := strconv.ParseFloat(args[1], 32)
 	y, _ := strconv.ParseFloat(args[2], 32)
 	z, _ := strconv.ParseFloat(args[3], 32)
-	return geom.WorldPoint{
-		X: float32(x), Y: float32(y), Z: float32(z),
+	return homocoord.Vec4{
+		X: float32(x), Y: float32(y), Z: float32(z), W: 1,
 	}
 }
 

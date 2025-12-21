@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/relaxgameing/computerGraphics/editor/scene"
 	"github.com/relaxgameing/computerGraphics/geom"
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 )
 
@@ -77,4 +78,19 @@ func (s *RasterScene) GetShapes() []shape.Shape {
 
 func (s *RasterScene) AddSceneEntities(entities ...shape.Shape) {
 	s.shapes = append(s.shapes, entities...)
+}
+
+// It projects the world point on to the viewport and then to the canvas all at once
+// cw , ch is canvas dimensions.
+// vw , vh is viewport dimensions.
+// d is the distance between the camera and viewport
+// * Note: z is needs to be divide with the resultant Vec3 after multiplying with this mtx
+func ProjectionViewport(d, cw, ch, vw, vh float32) homocoord.Mat3x4 {
+	px := d * cw / vw
+	py := d * ch / vh
+	return homocoord.Mat3x4{
+		px, 0, 0, 0, // x * d * cw / vw
+		0, py, 0, 0, // y * d * ch / vh
+		0, 0, 1, 0, // z (for w in perspective divide)
+	}
 }
