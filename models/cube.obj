@@ -1,0 +1,25 @@
+name cube
+# Cube with per-triangle colors (unit cube centered at origin)
+# Vertices match your indices 0-7
+v  1  1  1
+v -1  1  1  
+v -1 -1  1
+v  1 -1  1
+v  1  1 -1
+v -1  1 -1
+v -1 -1 -1
+v  1 -1 -1
+
+# Triangles with colors (your format: f v1 v2 v3 color)
+f 1 2 3 red
+f 1 3 4 red
+f 5 1 4 green
+f 5 4 8 green
+f 6 5 8 blue
+f 6 8 7 blue
+f 2 6 7 yellow
+f 2 7 3 yellow
+f 5 2 1 purple
+f 5 1 6 purple
+f 3 7 8 cyan
+f 3 8 4 cyan

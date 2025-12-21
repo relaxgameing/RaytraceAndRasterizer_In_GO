@@ -14,7 +14,7 @@ import (
 )
 
 type ObjParser struct {
-	reader *bufio.Reader
+	reader io.Reader
 }
 
 func NewObjParser() *ObjParser {
@@ -22,7 +22,7 @@ func NewObjParser() *ObjParser {
 }
 
 func (obj *ObjParser) ChangeReader(reader io.Reader) {
-	obj.reader = bufio.NewReader(reader)
+	obj.reader = reader
 }
 
 func (obj *ObjParser) ReadModel() *Model {
@@ -32,8 +32,9 @@ func (obj *ObjParser) ReadModel() *Model {
 		return nil
 	}
 
+	reader := bufio.NewReader(obj.reader)
 	for {
-		line, _, err := obj.reader.ReadLine()
+		line, _, err := reader.ReadLine()
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -45,6 +46,8 @@ func (obj *ObjParser) ReadModel() *Model {
 		cmd := string(line)
 
 		switch {
+		case strings.HasPrefix(cmd, "name"):
+			model.name = strings.Fields(cmd)[1]
 		case strings.HasPrefix(cmd, "v "):
 			model.AddVertices(obj.parseVertex(cmd))
 		case strings.HasPrefix(cmd, "f "):
@@ -88,9 +91,9 @@ func (obj *ObjParser) parseFace(model *Model, faceLine string) (geom.Triangle, e
 	}
 
 	return *geom.NewTriangle(
-		model.vertices[x],
-		model.vertices[y],
-		model.vertices[z],
+		model.vertices[x-1],
+		model.vertices[y-1],
+		model.vertices[z-1],
 		color,
 	), nil
 

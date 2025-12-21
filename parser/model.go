@@ -6,16 +6,20 @@ import (
 )
 
 type Model struct {
-	vertices []homocoord.Vec4
-
+	name      string
+	vertices  []homocoord.Vec4
 	triangles []geom.Triangle
 }
 
 type ModelInstance struct {
-	model *Model
+	name        string
+	model       *Model
+	scale       homocoord.Vec3
+	translation homocoord.Vec3
+	rotation    homocoord.Mat4
 }
 
-func NewModel(v []homocoord.Vec4, t []geom.Triangle) *Model {
+func NewModel(name string, v []homocoord.Vec4, t []geom.Triangle) *Model {
 	return &Model{
 		vertices:  v,
 		triangles: t,

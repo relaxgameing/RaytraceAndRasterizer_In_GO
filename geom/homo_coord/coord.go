@@ -25,21 +25,31 @@ func HomogeneousToVec3(v Vec4) Vec3 {
 
 // Translation matrix
 func Translation(tx, ty, tz float32) Mat4 {
-	return Mat4{1, 0, 0, tx, 0, 1, 0, ty, 0, 0, 1, tz, 0, 0, 0, 1}
+	return Mat4{
+		{1, 0, 0, tx},
+		{0, 1, 0, ty},
+		{0, 0, 1, tz},
+		{0, 0, 0, 1},
+	}
 }
 
 // Scale matrix
 func Scale(sx, sy, sz float32) Mat4 {
-	return Mat4{sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1}
+	return Mat4{
+		{sx, 0, 0, 0},
+		{0, sy, 0, 0},
+		{0, 0, sz, 0},
+		{0, 0, 0, 1},
+	}
 }
 
 // Rotation Y-axis (radians)
 func RotateY(angle float32) Mat4 {
-	c, s := math.Cos(float64(angle)), math.Sin(float64(angle))
+	c, s := float32(math.Cos(float64(angle))), float32(math.Sin(float64(angle)))
 	return Mat4{
-		float32(c), 0, float32(s), 0,
-		0, 1, 0, 0,
-		-float32(s), 0, float32(c), 0,
-		0, 0, 0, 1,
+		{c, 0, s, 0},
+		{0, 1, 0, 0},
+		{-s, 0, c, 0},
+		{0, 0, 0, 1},
 	}
 }
