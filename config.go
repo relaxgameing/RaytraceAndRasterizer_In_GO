@@ -8,7 +8,6 @@ import (
 	"github.com/relaxgameing/computerGraphics/editor/scene"
 	"github.com/relaxgameing/computerGraphics/geom"
 	rsScene "github.com/relaxgameing/computerGraphics/rasterization/scene"
-	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 	rayScene "github.com/relaxgameing/computerGraphics/raytracing/scene"
 	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
 	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
@@ -53,12 +52,7 @@ func NewRayTracingRequirements() *OptionRequirement {
 
 func NewRasterizationRequirements() *OptionRequirement {
 	scene := rsScene.NewRasterScene()
-	scene.AddSceneEntities(
-		shape.NewTriangle(
-			*geom.NewPoint(-200, -250, geom.PointWithIntensity(0.5)),
-			*geom.NewPoint(-200, 50, geom.PointWithIntensity(1)),
-			*geom.NewPoint(20, 250, geom.PointWithIntensity(1))).WithColor(common.ColorRed),
-	)
+	scene.AddSceneEntities()
 	return &OptionRequirement{
 		scene: scene,
 	}

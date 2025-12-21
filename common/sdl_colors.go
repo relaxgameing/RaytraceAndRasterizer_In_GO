@@ -19,3 +19,22 @@ func ChangeColorIntensity(color sdl.Color, intensity float32) sdl.Color {
 		A: uint8(float32(color.A) * intensity),
 	}
 }
+
+func StringToSdlColor(colorName string) sdl.Color {
+	switch colorName {
+	case "red":
+		return ColorRed
+	case "green":
+		return ColorGreen
+	case "blue":
+		return ColorBlue
+	case "yellow":
+		return ColorYellow
+	case "white":
+		return ColorWhite
+	case "black":
+		return ColorBlack
+	default:
+		return ColorWhite
+	}
+}
