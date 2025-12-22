@@ -89,8 +89,8 @@ func ProjectionViewport(d, cw, ch, vw, vh float32) homocoord.Mat3x4 {
 	px := d * cw / vw
 	py := d * ch / vh
 	return homocoord.Mat3x4{
-		{px, 0, 0, 0}, // x * d * cw / vw
-		{0, py, 0, 0}, // y * d * ch / vh
-		{0, 0, 1, 0},  // z (for w in perspective divide)
+		px, 0, 0, 0, // x * d * cw / vw
+		0, py, 0, 0, // y * d * ch / vh
+		0, 0, 1, 0, // z (for w in perspective divide)
 	}
 }
