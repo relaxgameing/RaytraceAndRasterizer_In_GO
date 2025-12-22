@@ -9,7 +9,7 @@ import (
 
 func TestObjParser(t *testing.T) {
 	parser := NewObjParser()
-	file, _ := os.Open("../models/cube.obj")
+	file, _ := os.Open("/Users/ajaygupta/Desktop/computerGraphics/scene/models/cube.obj")
 
 	parser.ChangeReader(file)
 	model := parser.ReadModel()
@@ -18,12 +18,12 @@ func TestObjParser(t *testing.T) {
 		t.Error("Model not parsed")
 	}
 
-	log.Info("TestObjParser", model.name, model)
+	log.Info("TestObjParser", model.Name(), model)
 }
 
 func TestParser(t *testing.T) {
 	parser := NewSceneParser()
-	file, _ := os.Open("../scene/rasterizaor.json")
+	file, _ := os.Open("/Users/ajaygupta/Desktop/computerGraphics/scene/rasterizaor.json")
 
 	parser.ChangeReader(file)
 	scene := parser.ReadScene()
@@ -31,7 +31,7 @@ func TestParser(t *testing.T) {
 	if scene == nil {
 		t.Error("scene is nil")
 	}
-	if len(scene.instances) != 1 || len(scene.models) != 1 {
+	if len(scene.Instances) == 0 || len(scene.Models) == 0 {
 		t.Error("scene has less number of instance or models")
 	}
 	log.Info("parserd data", "data", scene)

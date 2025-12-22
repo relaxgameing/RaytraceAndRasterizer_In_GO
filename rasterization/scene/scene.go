@@ -9,6 +9,7 @@ import (
 
 type RasterScene struct {
 	scene.BaseScene
+	scene.SceneObjects
 	shapes []shape.Shape
 }
 
@@ -56,6 +57,12 @@ func WithWidth(width int) sceneOptions {
 func WithHeight(height int) sceneOptions {
 	return func(s *RasterScene) {
 		s.Canvas.Height = height
+	}
+}
+
+func WithSceneObjects(sceneObj *scene.SceneObjects) sceneOptions {
+	return func(s *RasterScene) {
+		s.SceneObjects = *sceneObj
 	}
 }
 

@@ -9,12 +9,15 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/relaxgameing/computerGraphics/common"
+	"github.com/relaxgameing/computerGraphics/editor/scene"
 	"github.com/relaxgameing/computerGraphics/geom"
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 type ObjParser struct {
-	reader io.Reader
+	reader   io.Reader
+	curColor sdl.Color
 }
 
 func NewObjParser() *ObjParser {
@@ -25,12 +28,15 @@ func (obj *ObjParser) ChangeReader(reader io.Reader) {
 	obj.reader = reader
 }
 
-func (obj *ObjParser) ReadModel() *Model {
-	model := EmptyModel()
+func (obj *ObjParser) ReadModel() *scene.Model {
 	if obj.reader == nil {
 		log.Error("ObjParser -> ReadModel", "err", errors.New("Reader is nil"))
 		return nil
 	}
+
+	name := ""
+	vertices := make([]homocoord.Vec4, 0)
+	triangles := make([]geom.Triangle, 0)
 
 	reader := bufio.NewReader(obj.reader)
 	for {
@@ -46,21 +52,23 @@ func (obj *ObjParser) ReadModel() *Model {
 		cmd := string(line)
 
 		switch {
+		case strings.HasPrefix(cmd, "usemtl"):
+			obj.curColor = common.StringToSdlColor(strings.Fields(cmd)[1])
 		case strings.HasPrefix(cmd, "name"):
-			model.name = strings.Fields(cmd)[1]
+			name = strings.Fields(cmd)[1]
 		case strings.HasPrefix(cmd, "v "):
-			model.AddVertices(obj.parseVertex(cmd))
+			vertices = append(vertices, (obj.parseVertex(cmd)))
 		case strings.HasPrefix(cmd, "f "):
-			tri, err := (obj.parseFace(model, cmd))
+			tri, err := (obj.parseFace(vertices, cmd))
 			if err != nil {
 				log.Error("ObjParser -> ReadModel -> parseFace", "err", err)
 			}
-			model.triangles = append(model.triangles, tri)
+			triangles = append(triangles, tri)
 		}
 
 	}
 
-	return model
+	return scene.NewModel(name, vertices, triangles)
 }
 
 // v x y z [w]
@@ -74,27 +82,26 @@ func (obj *ObjParser) parseVertex(vertexLine string) homocoord.Vec4 {
 	}
 }
 
-// f 1 2 3 color				   # Triangle (3 verts) (right now only this works)
-// f 1/1/1 2/2/2 3/3/3 color       # Triangle with UVs/normals
-// f 1//1 2//2 3//3 color          # Triangle with normals only
-// f 1/1 2/2 3/3 4/4 color         # Quad with UVs
-func (obj *ObjParser) parseFace(model *Model, faceLine string) (geom.Triangle, error) {
+// f 1 2 3 				   # Triangle (3 verts) (right now only this works)
+// f 1/1/1 2/2/2 3/3/3        # Triangle with UVs/normals
+// f 1//1 2//2 3//3           # Triangle with normals only
+// f 1/1 2/2 3/3 4/4          # Quad with UVs
+func (obj *ObjParser) parseFace(vertices []homocoord.Vec4, faceLine string) (geom.Triangle, error) {
 	args := strings.Fields(faceLine)
 
 	x, _ := strconv.Atoi(args[1])
 	y, _ := strconv.Atoi(args[2])
 	z, _ := strconv.Atoi(args[3])
-	color := common.StringToSdlColor(string(args[3]))
 
-	if len(model.vertices) < max(x, y, z) && min(x, y, z) < 1 {
+	if len(vertices) < max(x, y, z) && min(x, y, z) < 1 {
 		return geom.Triangle{}, errors.New("Vertex doesn't exists")
 	}
 
 	return *geom.NewTriangle(
-		model.vertices[x-1],
-		model.vertices[y-1],
-		model.vertices[z-1],
-		color,
+		vertices[x-1],
+		vertices[y-1],
+		vertices[z-1],
+		obj.curColor,
 	), nil
 
 }

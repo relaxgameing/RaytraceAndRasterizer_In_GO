@@ -14,6 +14,11 @@ type BaseScene struct {
 	ViewCamera *Camera
 }
 
+type SceneObjects struct {
+	Models    map[string]*Model
+	Instances []*ModelInstance
+}
+
 /*
 * Canvas:
 * it is the screen which we are able to see in the compute

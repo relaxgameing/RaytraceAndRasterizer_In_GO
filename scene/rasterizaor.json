@@ -1,5 +1,7 @@
 {
-    "modelPath": ["../models/cube.obj"],
+    "modelPath": [
+        "/Users/ajaygupta/Desktop/computerGraphics/scene/models/cube.obj"
+    ],
     "camera": {
         "position": [0.0, 0.0, 0.0],
         "target": [0.0, 0.0, 1.0],
@@ -13,7 +15,16 @@
                 0.7071, 0.0, 0.7071, 0.0, 0.0, 1.0, 0.0, 0.0, -0.7071, 0.0,
                 0.7071, 0.0, 0.0, 0.0, 0.0, 1.0
             ],
-            "translation": [1.0, 2.0, 3.0]
+            "translation": [-1.5, 0, 7.0]
+        },
+        {
+            "model": "cube",
+            "scale": [1, 1, 1],
+            "rotation": [
+                0.7071, 0.0, 0.7071, 0.0, 0.0, 1.0, 0.0, 0.0, -0.7071, 0.0,
+                0.7071, 0.0, 0.0, 0.0, 0.0, 1.0
+            ],
+            "translation": [1.25, 2, 7.5]
         }
     ]
 }

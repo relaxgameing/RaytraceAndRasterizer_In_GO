@@ -18,3 +18,20 @@ func NewTriangle(a, b, c homocoord.Vec4, color sdl.Color) *Triangle {
 
 	return triangle
 }
+
+func (t *Triangle) GetVertex(i int) homocoord.Vec4 {
+	switch i % 3 {
+	case 0:
+		return t.a
+	case 1:
+		return t.b
+	case 2:
+		return t.c
+	default:
+		return t.a
+	}
+}
+
+func (t *Triangle) GetColor() sdl.Color {
+	return t.color
+}

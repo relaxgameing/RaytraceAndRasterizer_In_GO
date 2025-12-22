@@ -8,16 +8,12 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	"github.com/relaxgameing/computerGraphics/editor/scene"
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 )
 
 type SceneParser struct {
 	Parser
-}
-
-type Scene struct {
-	models    map[string]*Model
-	instances []*ModelInstance
 }
 
 type SceneInstanceJson struct {
@@ -45,7 +41,7 @@ func (s *SceneParser) ChangeReader(reader io.Reader) {
 	s.reader = reader
 }
 
-func (s *SceneParser) ReadScene() *Scene {
+func (s *SceneParser) ReadScene() *scene.SceneObjects {
 	if s.reader == nil {
 		log.Error("SceneParser -> ReadScene", "err", errors.New("Reader is nil"))
 		return nil
@@ -60,15 +56,15 @@ func (s *SceneParser) ReadScene() *Scene {
 		return nil
 	}
 
-	scene := Scene{models: readModels(sceneData.ModelPaths)}
+	scene := scene.SceneObjects{Models: readModels(sceneData.ModelPaths)}
 
-	scene.instances = readModelInstances(scene.models, sceneData.Instances)
+	scene.Instances = readModelInstances(scene.Models, sceneData.Instances)
 
 	return &scene
 }
 
-func readModels(paths []string) map[string]*Model {
-	models := make(map[string]*Model)
+func readModels(paths []string) map[string]*scene.Model {
+	models := make(map[string]*scene.Model)
 	objParser := NewObjParser()
 	for _, path := range paths {
 		f, err := os.Open(path)
@@ -87,24 +83,23 @@ func readModels(paths []string) map[string]*Model {
 			return nil
 		}
 
-		models[model.name] = model
+		models[model.Name()] = model
 	}
 
 	return models
 }
 
-func readModelInstances(models map[string]*Model, instanceData []SceneInstanceJson) []*ModelInstance {
-	instances := make([]*ModelInstance, 0)
+func readModelInstances(models map[string]*scene.Model, instanceData []SceneInstanceJson) []*scene.ModelInstance {
+	instances := make([]*scene.ModelInstance, 0)
 	for _, instance := range instanceData {
-		modelInstance := ModelInstance{
-			model:       models[instance.Name],
-			name:        instance.Name,
-			scale:       homocoord.Vec3{X: instance.Scale[0], Y: instance.Scale[1], Z: instance.Scale[2]},
-			translation: homocoord.Vec3{X: instance.Translation[0], Y: instance.Translation[1], Z: instance.Translation[2]},
-			rotation:    instance.Rotation,
-		}
+		model := scene.NewModelInstance(
+			instance.Name,
+			models[instance.Name],
+			homocoord.Vec3{X: instance.Scale[0], Y: instance.Scale[1], Z: instance.Scale[2]},
+			homocoord.Vec3{X: instance.Translation[0], Y: instance.Translation[1], Z: instance.Translation[2]},
+			instance.Rotation)
 
-		instances = append(instances, &modelInstance)
+		instances = append(instances, &model)
 	}
 
 	return instances

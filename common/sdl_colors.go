@@ -7,6 +7,8 @@ var (
 	ColorGreen  = sdl.Color{R: 0, G: 255, B: 0, A: 255}
 	ColorBlue   = sdl.Color{R: 0, G: 0, B: 255, A: 255}
 	ColorYellow = sdl.Color{R: 255, G: 255, B: 0, A: 255}
+	ColorCyan   = sdl.Color{R: 0, G: 255, B: 255, A: 255}
+	ColorPurple = sdl.Color{R: 255, G: 0, B: 255, A: 255}
 	ColorWhite  = sdl.Color{R: 255, G: 255, B: 255, A: 255}
 	ColorBlack  = sdl.Color{R: 0, G: 0, B: 0, A: 0}
 )
@@ -30,11 +32,15 @@ func StringToSdlColor(colorName string) sdl.Color {
 		return ColorBlue
 	case "yellow":
 		return ColorYellow
+	case "purple":
+		return ColorPurple
+	case "cyan":
+		return ColorCyan
 	case "white":
 		return ColorWhite
 	case "black":
 		return ColorBlack
 	default:
-		return ColorWhite
+		return ColorBlack
 	}
 }

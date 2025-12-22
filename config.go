@@ -7,6 +7,7 @@ import (
 	"github.com/relaxgameing/computerGraphics/common"
 	"github.com/relaxgameing/computerGraphics/editor/scene"
 	"github.com/relaxgameing/computerGraphics/geom"
+	"github.com/relaxgameing/computerGraphics/parser"
 	rsScene "github.com/relaxgameing/computerGraphics/rasterization/scene"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 	rayScene "github.com/relaxgameing/computerGraphics/raytracing/scene"
@@ -52,7 +53,17 @@ func NewRayTracingRequirements() *OptionRequirement {
 }
 
 func NewRasterizationRequirements() *OptionRequirement {
-	scene := rsScene.NewRasterScene()
+	file, err := os.Open("./scene/rasterizaor.json")
+	if err != nil {
+		log.Error("NewRasterizationRequirements -> Error opening file", "err", err)
+		return nil
+	}
+	sceneParser := parser.NewSceneParser()
+	sceneParser.ChangeReader(file)
+
+	scene := rsScene.NewRasterScene(
+		rsScene.WithSceneObjects(sceneParser.ReadScene()),
+	)
 	scene.AddSceneEntities(
 		shape.NewTriangle(
 			*geom.NewPoint(-50, -200),

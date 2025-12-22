@@ -9,9 +9,9 @@ func (s *BaseScene) CanvasToViewPort(cx, cy int) (vx, vy float32) {
 	return vx, vy
 }
 
-func (s *BaseScene) CanvasToSdl(cx, cy int) (x, y int) {
-	x = (s.Canvas.Width / 2) + cx
-	y = (s.Canvas.Height / 2) - cy
+func (s *BaseScene) CanvasToSdl(cx, cy int) (x, y int32) {
+	x = int32((s.Canvas.Width / 2) + cx)
+	y = int32((s.Canvas.Height / 2) - cy)
 
 	return x, y
 }
