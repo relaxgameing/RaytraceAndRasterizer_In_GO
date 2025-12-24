@@ -23,6 +23,19 @@ func HomogeneousToVec3(v Vec4) Vec3 {
 	return Vec3{v.X / v.W, v.Y / v.W, v.Z / v.W} // point
 }
 
+func (v *Vec3) Dot(p Vec3) float32 { return v.X*p.X + v.Y*p.Y + v.Z*p.Z }
+
+func (v *Vec3) Add(p Vec3) Vec3      { return Vec3{v.X + p.X, v.Y + p.Y, v.Z + p.Z} }
+func (v *Vec3) Subtract(p Vec3) Vec3 { return Vec3{v.X - p.X, v.Y - p.Y, v.Z - p.Z} }
+
+func (v *Vec3) ScalarPrd(factor float32) Vec3 {
+	return Vec3{
+		v.X * factor,
+		v.Y * factor,
+		v.Z * factor,
+	}
+}
+
 // Translation matrix
 func Translation(tx, ty, tz float32) Mat4 {
 	return Mat4{1, 0, 0, tx, 0, 1, 0, ty, 0, 0, 1, tz, 0, 0, 0, 1}

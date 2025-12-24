@@ -1,6 +1,10 @@
 package geom
 
-import "math"
+import (
+	"math"
+
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
+)
 
 // pi radian = 180 deg
 func DegreeToRadian(degree float64) float64 {
@@ -19,6 +23,11 @@ func Swap[T ~int | ~float32 | ~float64](x, y T) (T, T) {
 func Interpolate[T ~int | ~float32 | ~float64](start, end T, step float32) float32 {
 	s, e := float32(start), float32(end)
 	return s + (e-s)*step
+}
+
+func LerpOnLine(start, end homocoord.Vec3, t float32) homocoord.Vec3 {
+	diff := end.Subtract(start)
+	return start.Add(diff.ScalarPrd(t))
 }
 
 // * From lower value to larger value
