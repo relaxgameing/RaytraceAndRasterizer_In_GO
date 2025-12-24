@@ -6,20 +6,20 @@ import (
 )
 
 type Triangle struct {
-	a homocoord.Vec4
-	b homocoord.Vec4
-	c homocoord.Vec4
+	a homocoord.Vec3
+	b homocoord.Vec3
+	c homocoord.Vec3
 
 	color sdl.Color
 }
 
-func NewTriangle(a, b, c homocoord.Vec4, color sdl.Color) *Triangle {
+func NewTriangle(a, b, c homocoord.Vec3, color sdl.Color) *Triangle {
 	triangle := &Triangle{a, b, c, color}
 
 	return triangle
 }
 
-func (t *Triangle) GetVertex(i int) homocoord.Vec4 {
+func (t *Triangle) GetVertex(i int) homocoord.Vec3 {
 	switch i % 3 {
 	case 0:
 		return t.a

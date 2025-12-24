@@ -1,5 +1,7 @@
 package scene
 
+import vf "github.com/relaxgameing/computerGraphics/editor/scene/view_frustum"
+
 type Scene interface {
 	GetName() string
 	GetCanvas() Canvas
@@ -12,6 +14,7 @@ type BaseScene struct {
 	ViewPort
 
 	ViewCamera *Camera
+	ViewVolume vf.ViewFrustum
 }
 
 type SceneObjects struct {

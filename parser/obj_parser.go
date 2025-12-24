@@ -35,7 +35,7 @@ func (obj *ObjParser) ReadModel() *scene.Model {
 	}
 
 	name := ""
-	vertices := make([]homocoord.Vec4, 0)
+	vertices := make([]homocoord.Vec3, 0)
 	triangles := make([]geom.Triangle, 0)
 
 	reader := bufio.NewReader(obj.reader)
@@ -72,13 +72,13 @@ func (obj *ObjParser) ReadModel() *scene.Model {
 }
 
 // v x y z [w]
-func (obj *ObjParser) parseVertex(vertexLine string) homocoord.Vec4 {
+func (obj *ObjParser) parseVertex(vertexLine string) homocoord.Vec3 {
 	args := strings.Fields(vertexLine)
 	x, _ := strconv.ParseFloat(args[1], 32)
 	y, _ := strconv.ParseFloat(args[2], 32)
 	z, _ := strconv.ParseFloat(args[3], 32)
-	return homocoord.Vec4{
-		X: float32(x), Y: float32(y), Z: float32(z), W: 1,
+	return homocoord.Vec3{
+		X: float32(x), Y: float32(y), Z: float32(z),
 	}
 }
 
@@ -86,7 +86,7 @@ func (obj *ObjParser) parseVertex(vertexLine string) homocoord.Vec4 {
 // f 1/1/1 2/2/2 3/3/3        # Triangle with UVs/normals
 // f 1//1 2//2 3//3           # Triangle with normals only
 // f 1/1 2/2 3/3 4/4          # Quad with UVs
-func (obj *ObjParser) parseFace(vertices []homocoord.Vec4, faceLine string) (geom.Triangle, error) {
+func (obj *ObjParser) parseFace(vertices []homocoord.Vec3, faceLine string) (geom.Triangle, error) {
 	args := strings.Fields(faceLine)
 
 	x, _ := strconv.Atoi(args[1])

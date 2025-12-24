@@ -7,11 +7,11 @@ import (
 
 type Model struct {
 	name      string
-	vertices  []homocoord.Vec4
+	vertices  []homocoord.Vec3
 	triangles []geom.Triangle
 }
 
-func NewModel(name string, v []homocoord.Vec4, t []geom.Triangle) *Model {
+func NewModel(name string, v []homocoord.Vec3, t []geom.Triangle) *Model {
 	return &Model{
 		name:      name,
 		vertices:  v,
@@ -22,7 +22,7 @@ func NewModel(name string, v []homocoord.Vec4, t []geom.Triangle) *Model {
 func (m Model) Name() string                   { return m.name }
 func (m Model) VertexCount() int               { return len(m.vertices) }
 func (m Model) TriangleCount() int             { return len(m.triangles) }
-func (m Model) VertexAt(i int) homocoord.Vec4  { return m.vertices[i] }
+func (m Model) VertexAt(i int) homocoord.Vec3  { return m.vertices[i] }
 func (m Model) TriangleAt(i int) geom.Triangle { return m.triangles[i] }
 
 func EmptyModel() *Model {
