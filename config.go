@@ -54,6 +54,7 @@ func NewRayTracingRequirements() *OptionRequirement {
 
 func NewRasterizationRequirements() *OptionRequirement {
 	file, err := os.Open("./scene/rasterizaor.json")
+	// file, err := os.Open("./scene/clipping_scene.json")
 	if err != nil {
 		log.Error("NewRasterizationRequirements -> Error opening file", "err", err)
 		return nil

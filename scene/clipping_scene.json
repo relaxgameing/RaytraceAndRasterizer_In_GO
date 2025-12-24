@@ -1,0 +1,42 @@
+{
+    "modelPath": [
+        "/Users/ajaygupta/Desktop/computerGraphics/scene/models/cube.obj"
+    ],
+    "camera": {
+        "position": [0.0, 0.0, -5.0],
+        "target": [0.0, 0.0, 1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "instances": [
+        {
+            "model": "cube",
+            "scale": [1.0, 1.0, 1.0],
+            "rotation": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            "translation": [0.0, 0.0, 7.0],
+            "bounding_sphere": {
+                "origin": [0.0, 0.0, 7.0],
+                "radius": 0.866
+            }
+        },
+        {
+            "model": "cube",
+            "scale": [1.2, 1.2, 1.2],
+            "rotation": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            "translation": [2.5, 1.0, 1.5],
+            "bounding_sphere": {
+                "origin": [2.5, 1.0, 1.5],
+                "radius": 1.039
+            }
+        },
+        {
+            "model": "cube",
+            "scale": [0.8, 0.8, 0.8],
+            "rotation": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+            "translation": [4.0, 3.0, 3.0],
+            "bounding_sphere": {
+                "origin": [4.0, 3.0, 3.0],
+                "radius": 0.693
+            }
+        }
+    ]
+}

@@ -2,6 +2,7 @@ package scene
 
 import (
 	"github.com/relaxgameing/computerGraphics/editor/scene"
+	viewfrustum "github.com/relaxgameing/computerGraphics/editor/scene/view_frustum"
 	"github.com/relaxgameing/computerGraphics/geom"
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
@@ -33,6 +34,7 @@ func NewRasterScene(opt ...sceneOptions) *RasterScene {
 				scene.InitialCameraDirection,
 				geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
 			),
+			ViewFrustum: viewfrustum.New5PlaneFrustum(),
 		},
 	}
 

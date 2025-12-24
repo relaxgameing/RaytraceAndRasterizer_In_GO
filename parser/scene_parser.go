@@ -9,6 +9,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/relaxgameing/computerGraphics/editor/scene"
+	"github.com/relaxgameing/computerGraphics/geom"
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 )
 
@@ -17,10 +18,11 @@ type SceneParser struct {
 }
 
 type SceneInstanceJson struct {
-	Name        string         `json:"model"`
-	Scale       [3]float32     `json:"scale"`
-	Translation [3]float32     `json:"translation"`
-	Rotation    homocoord.Mat4 `json:"rotation"`
+	Name           string         `json:"model"`
+	Scale          [3]float32     `json:"scale"`
+	Translation    [3]float32     `json:"translation"`
+	Rotation       homocoord.Mat4 `json:"rotation"`
+	BoundingSphere geom.Sphere    `json:"bounding_sphere"`
 }
 
 type SceneJson struct {
@@ -97,7 +99,9 @@ func readModelInstances(models map[string]*scene.Model, instanceData []SceneInst
 			models[instance.Name],
 			homocoord.Vec3{X: instance.Scale[0], Y: instance.Scale[1], Z: instance.Scale[2]},
 			homocoord.Vec3{X: instance.Translation[0], Y: instance.Translation[1], Z: instance.Translation[2]},
-			instance.Rotation)
+			instance.Rotation,
+			instance.BoundingSphere,
+		)
 
 		instances = append(instances, &model)
 	}

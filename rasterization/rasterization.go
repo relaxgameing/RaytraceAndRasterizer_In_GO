@@ -5,6 +5,8 @@ import (
 	"github.com/relaxgameing/computerGraphics/common"
 	"github.com/relaxgameing/computerGraphics/editor"
 	eScene "github.com/relaxgameing/computerGraphics/editor/scene"
+	viewfrustum "github.com/relaxgameing/computerGraphics/editor/scene/view_frustum"
+	"github.com/relaxgameing/computerGraphics/geom"
 	homo "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene"
 	"github.com/veandco/go-sdl2/sdl"
@@ -32,33 +34,53 @@ func Rasterization(e *editor.Editor) {
 		float32(curScene.ViewPort.Height))
 
 	for _, instance := range curScene.Instances {
+		boundingSphere := instance.GetBoundingSphere()
+		condition := curScene.ViewFrustum.ObjectInsideFrustum(boundingSphere.GetOrigin(), boundingSphere.GetRadius())
+
+		if condition == viewfrustum.OutsideVolume {
+			continue
+		}
 
 		model := curScene.Models[instance.Name()]
 		log.Info("Rasterization -> Drawing Model", "model", model.Name())
+		transformationMtx := modelTransformation(instance)
 
 		for i := 0; i < model.TriangleCount(); i++ {
 			triangle := model.TriangleAt(i)
-
 			curColor := triangle.GetColor()
 			setRendererDrawColor(e.Renderer, curColor)
 
-			transformationMtx := modelTransformation(instance)
+			subTriangles := make([]geom.Triangle, 0)
+			if condition == viewfrustum.PartiallyInside {
+				subTriangles = append(subTriangles, curScene.ViewFrustum.TriangleInsideFrustum(triangle)...)
+			} else {
+				subTriangles = append(subTriangles, triangle)
+			}
 
-			transformedA := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(0)))
-			transformedB := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(1)))
-			transformedC := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(2)))
+			for _, tri := range subTriangles {
+				pa, pb, pc := transformAndProjectTriangle(tri, transformationMtx, projectionMtx)
 
-			pa := homo.Mat3x4MulVec4(projectionMtx, transformedA)
-			pb := homo.Mat3x4MulVec4(projectionMtx, transformedB)
-			pc := homo.Mat3x4MulVec4(projectionMtx, transformedC)
+				drawLine(e.Renderer, curScene, pa, pb)
+				drawLine(e.Renderer, curScene, pa, pc)
+				drawLine(e.Renderer, curScene, pc, pb)
+			}
 
-			drawLine(e.Renderer, curScene, pa, pb)
-			drawLine(e.Renderer, curScene, pa, pc)
-			drawLine(e.Renderer, curScene, pc, pb)
 		}
 	}
 
 	e.Renderer.Present()
+}
+
+func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) (pa, pb, pc homo.Vec3) {
+	transformedA := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(0)))
+	transformedB := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(1)))
+	transformedC := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(2)))
+
+	pa = homo.Mat3x4MulVec4(projectionMtx, transformedA)
+	pb = homo.Mat3x4MulVec4(projectionMtx, transformedB)
+	pc = homo.Mat3x4MulVec4(projectionMtx, transformedC)
+
+	return pa, pb, pc
 }
 
 func modelTransformation(model *eScene.ModelInstance) homo.Mat4 {

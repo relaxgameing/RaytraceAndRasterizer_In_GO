@@ -13,8 +13,8 @@ type BaseScene struct {
 	Canvas
 	ViewPort
 
-	ViewCamera *Camera
-	ViewVolume vf.ViewFrustum
+	ViewCamera  *Camera
+	ViewFrustum vf.ViewFrustum
 }
 
 type SceneObjects struct {

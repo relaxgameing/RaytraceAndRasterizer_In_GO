@@ -30,20 +30,22 @@ func EmptyModel() *Model {
 }
 
 type ModelInstance struct {
-	name        string
-	model       *Model
-	scale       homocoord.Vec3
-	translation homocoord.Vec3
-	rotation    homocoord.Mat4
+	name           string
+	model          *Model
+	scale          homocoord.Vec3
+	translation    homocoord.Vec3
+	rotation       homocoord.Mat4
+	boundingSphere geom.Sphere
 }
 
-func NewModelInstance(name string, model *Model, scale, translation homocoord.Vec3, rotation homocoord.Mat4) ModelInstance {
+func NewModelInstance(name string, model *Model, scale, translation homocoord.Vec3, rotation homocoord.Mat4, boundingSphere geom.Sphere) ModelInstance {
 	return ModelInstance{
-		name:        name,
-		model:       model,
-		scale:       scale,
-		translation: translation,
-		rotation:    rotation,
+		name:           name,
+		model:          model,
+		scale:          scale,
+		translation:    translation,
+		rotation:       rotation,
+		boundingSphere: boundingSphere,
 	}
 }
 
@@ -65,4 +67,8 @@ func (mi ModelInstance) GetTranslation() homocoord.Vec3 {
 
 func (mi ModelInstance) GetRotation() homocoord.Mat4 {
 	return mi.rotation
+}
+
+func (mi ModelInstance) GetBoundingSphere() geom.Sphere {
+	return mi.boundingSphere
 }
