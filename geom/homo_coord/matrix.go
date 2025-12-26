@@ -3,6 +3,15 @@ package homocoord
 type Mat4 [16]float32   // Row-major: [0,1,2,3 | 4,5,6,7 | 8,9,10,11 | 12,13,14,15]
 type Mat3x4 [12]float32 // [0,1,2,3 | 4,5,6,7 | 8,9,10,11]
 
+func IdentityMat4() Mat4 {
+	return Mat4{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	}
+}
+
 func Mat4Mul(A, B Mat4) Mat4 {
 	var C Mat4
 	for i := 0; i < 4; i++ {

@@ -2,7 +2,7 @@ package scene
 
 import (
 	"github.com/relaxgameing/computerGraphics/editor/scene"
-	"github.com/relaxgameing/computerGraphics/geom"
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
 	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
 )
@@ -28,10 +28,10 @@ func NewScene(sceneName string) *RayScene {
 				Height:             1,
 				DistanceFromOrigin: 1,
 			},
-			ViewCamera: scene.NewCamera(
-				geom.WorldPoint{X: 0, Y: 0, Z: 0},
-				scene.InitialCameraDirection,
-				geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
+			ViewCamera: scene.NewCamera(homocoord.Vec3{0, 0, 0},
+				homocoord.Vec3{0, 0, 1},
+				homocoord.Vec3{0, 1, 0},
+				homocoord.IdentityMat4(),
 			),
 		},
 	}

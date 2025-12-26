@@ -33,6 +33,37 @@ func main() {
 				log.Info("Rasterization -- Completed")
 			}
 		},
+		sdl.KEYDOWN: func(event sdl.Event) {
+			keyEvent := event.(*sdl.KeyboardEvent)
+
+			camera := e.Scene.GetCamera()
+			switch sdl.GetKeyName(keyEvent.Keysym.Sym) {
+			case "W":
+				camera.MoveBy(camera.GetForwardDirection())
+			case "S":
+				dir := camera.GetForwardDirection()
+				camera.MoveBy(dir.ScalarPrd(-1))
+			case "A":
+				forward := camera.GetForwardDirection()
+				up := camera.GetUpDirection()
+				leftDir := forward.Cross(up)
+				camera.MoveBy(leftDir)
+			case "D":
+				forward := camera.GetForwardDirection()
+				up := camera.GetUpDirection()
+				right := forward.Cross(up)
+				camera.MoveBy(right.ScalarPrd(-1))
+
+			case "E":
+				up := camera.GetUpDirection()
+				camera.MoveBy(up)
+			case "Q":
+				up := camera.GetUpDirection()
+				camera.MoveBy(up.ScalarPrd(-1))
+			}
+
+			rasterization.Rasterization(e)
+		},
 	})
 
 }

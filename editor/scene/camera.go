@@ -1,6 +1,9 @@
 package scene
 
-import "github.com/relaxgameing/computerGraphics/geom"
+import (
+	"github.com/relaxgameing/computerGraphics/geom"
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
+)
 
 var (
 	InitialCameraDirection geom.Vector = geom.Vector{WorldPoint: geom.WorldPoint{X: 0, Y: 0, Z: 1}}
@@ -12,51 +15,50 @@ var (
  */
 type Camera struct {
 	//* this is the position of the camera in the scene
-	position geom.WorldPoint
+	position homocoord.Vec3
 
-	//* ViewDirection is a unit vector in the direction where the camera is seeing
-	viewDirection geom.Vector
+	//* target represent the direction which the camera is looking
+	target homocoord.Vec3
+	//* this is the up direction from target
+	up homocoord.Vec3
 
 	//* Rotation is the current rotation of the camera
-	rotation geom.Rotation
+	rotation homocoord.Mat4
 }
 
-func NewCamera(position geom.WorldPoint, viewDirection geom.Vector, rotation geom.Rotation) *Camera {
+func NewCamera(position, target, up homocoord.Vec3, rotation homocoord.Mat4) *Camera {
 	return &Camera{
-		position:      geom.WorldPoint{X: 0, Y: 0, Z: 0},
-		viewDirection: InitialCameraDirection,
-		rotation:      geom.Rotation{Pitch: 0, Yaw: 0, Roll: 0},
+		position: position,
+		target:   target,
+		up:       up,
+		rotation: rotation,
 	}
 }
 
-func (c *Camera) GetPosition() geom.WorldPoint {
+func (c *Camera) GetPosition() homocoord.Vec3 {
 	return c.position
 }
 
-func (c *Camera) GetDirection() geom.Vector {
-	return c.viewDirection
+func (c *Camera) GetForwardDirection() homocoord.Vec3 {
+	return c.target
 }
-func (c *Camera) SetDirection(newDirection geom.Vector) {
-	c.viewDirection = *newDirection.UnitVector()
+
+func (c *Camera) GetUpDirection() homocoord.Vec3 {
+	return c.up
 }
-func (c *Camera) GetRotation() geom.Rotation {
+
+func (c *Camera) GetRightDirection() homocoord.Vec3 {
+	return c.target.Cross(c.up)
+}
+
+func (c *Camera) GetRotation() homocoord.Mat4 {
 	return c.rotation
 }
 
-func (c *Camera) RotateCameraBy(rotation geom.Rotation) {
-	c.rotation.Pitch += rotation.Pitch
-	c.rotation.Yaw += rotation.Yaw
-	c.rotation.Roll += rotation.Roll
-
-	c.recomputeViewVector()
+func (c *Camera) MoveBy(translation homocoord.Vec3) {
+	c.position = c.position.Add(translation)
 }
 
-func (c *Camera) recomputeViewVector() {
-	c.SetDirection(*InitialCameraDirection.ToVector().Rotate(c.rotation).UnitVector())
-}
-
-func (c *Camera) MoveCameraBy(position geom.Vector) {
-	c.position.X += position.X
-	c.position.Y += position.Y
-	c.position.Z += position.Z
+func (c *Camera) RotateBy(rotation homocoord.Mat4) {
+	c.rotation = homocoord.Mat4Mul(c.rotation, rotation)
 }

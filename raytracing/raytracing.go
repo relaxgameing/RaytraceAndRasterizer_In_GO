@@ -44,17 +44,20 @@ func ScalarProductColor(color sdl.Color, factor float32) *sdl.Color {
 func generateViewPortRay(s *scene.RayScene, i int, j int) *geom.Ray {
 	vx, vy := s.CanvasToViewPort(i, j)
 
+	//todo: refactor the raytracer to use homocoord
 	cameraPosition := s.ViewCamera.GetPosition()
-	cameraRotation := s.ViewCamera.GetRotation()
+	// cameraRotation := s.ViewCamera.GetRotation()
 
 	var curRay geom.Ray = geom.Ray{
-		Point:  cameraPosition,
+		Point:  geom.WorldPoint{X: 0, Y: 0, Z: 0},
 		Lambda: 1e6,
 		DirectionVector: *geom.NewVector(geom.WorldPoint{
 			X: cameraPosition.X + vx,
 			Y: cameraPosition.Y + vy,
-			Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
-			cameraPosition).Rotate(cameraRotation),
+			// Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
+			// cameraPosition).Rotate(cameraRotation),
+			Z: cameraPosition.Z},
+			geom.WorldPoint{X: 0, Y: 0, Z: 0}),
 	}
 
 	return &curRay

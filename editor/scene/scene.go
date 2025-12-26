@@ -4,8 +4,10 @@ import vf "github.com/relaxgameing/computerGraphics/editor/scene/view_frustum"
 
 type Scene interface {
 	GetName() string
-	GetCanvas() Canvas
-	GetViewPort() ViewPort
+	GetCanvas() *Canvas
+	GetViewPort() *ViewPort
+	GetCamera() *Camera
+	GetViewFrustum() *vf.ViewFrustum
 }
 
 type BaseScene struct {
@@ -47,6 +49,8 @@ type ViewPort struct {
 	DistanceFromOrigin int
 }
 
-func (b *BaseScene) GetName() string       { return b.Name }
-func (b *BaseScene) GetCanvas() Canvas     { return b.Canvas }
-func (b *BaseScene) GetViewPort() ViewPort { return b.ViewPort }
+func (b *BaseScene) GetName() string                 { return b.Name }
+func (b *BaseScene) GetCanvas() *Canvas              { return &b.Canvas }
+func (b *BaseScene) GetViewPort() *ViewPort          { return &b.ViewPort }
+func (b *BaseScene) GetCamera() *Camera              { return b.ViewCamera }
+func (b *BaseScene) GetViewFrustum() *vf.ViewFrustum { return &b.ViewFrustum }

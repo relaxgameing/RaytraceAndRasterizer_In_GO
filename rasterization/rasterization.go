@@ -43,7 +43,7 @@ func Rasterization(e *editor.Editor) {
 
 		model := curScene.Models[instance.Name()]
 		log.Info("Rasterization -> Drawing Model", "model", model.Name())
-		transformationMtx := modelTransformation(instance)
+		transformationMtx := modelTransformation(instance, curScene.ViewCamera)
 
 		for i := 0; i < model.TriangleCount(); i++ {
 			triangle := model.TriangleAt(i)
@@ -83,17 +83,19 @@ func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.
 	return pa, pb, pc
 }
 
-func modelTransformation(model *eScene.ModelInstance) homo.Mat4 {
+func modelTransformation(model *eScene.ModelInstance, camera *eScene.Camera) homo.Mat4 {
+	modelTranslation := model.GetTranslation()
+	translation := modelTranslation.Subtract(camera.GetPosition())
+
+	modelRotation := model.GetRotation()
+	rotation := homo.Mat4Mul(modelRotation, camera.GetRotation())
+
 	scale := model.GetScale()
-	translation := model.GetTranslation()
-	rotation := model.GetRotation()
-
 	scaleMtx := homo.Scale(scale.X, scale.Y, scale.Y)
-	translationMtx := homo.Translation(translation.X, translation.Y, translation.Z)
 
+	translationMtx := homo.Translation(translation.X, translation.Y, translation.Z)
 	transformationMtx := homo.Mat4Mul(rotation, scaleMtx)
 	return homo.Mat4Mul(translationMtx, transformationMtx)
-	// return translationMtx
 }
 
 func drawLine(renderer *sdl.Renderer, curScene *scene.RasterScene, a, b homo.Vec3) {

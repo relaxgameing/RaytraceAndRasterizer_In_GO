@@ -23,10 +23,16 @@ func HomogeneousToVec3(v Vec4) Vec3 {
 	return Vec3{v.X / v.W, v.Y / v.W, v.Z / v.W} // point
 }
 
-func (v *Vec3) Dot(p Vec3) float32 { return v.X*p.X + v.Y*p.Y + v.Z*p.Z }
-
 func (v *Vec3) Add(p Vec3) Vec3      { return Vec3{v.X + p.X, v.Y + p.Y, v.Z + p.Z} }
 func (v *Vec3) Subtract(p Vec3) Vec3 { return Vec3{v.X - p.X, v.Y - p.Y, v.Z - p.Z} }
+func (v *Vec3) Dot(p Vec3) float32   { return v.X*p.X + v.Y*p.Y + v.Z*p.Z }
+func (v *Vec3) Cross(p Vec3) Vec3 {
+	return Vec3{
+		X: v.Y*p.Z - v.Z*p.Y,
+		Y: v.Z*p.X - v.X*p.Z,
+		Z: v.X*p.Y - v.Y*p.X,
+	}
+}
 
 func (v *Vec3) ScalarPrd(factor float32) Vec3 {
 	return Vec3{
@@ -53,6 +59,26 @@ func RotateY(angle float32) Mat4 {
 		c, 0, s, 0,
 		0, 1, 0, 0,
 		-s, 0, c, 0,
+		0, 0, 0, 1,
+	}
+}
+
+func RotateX(angle float32) Mat4 {
+	c, s := float32(math.Cos(float64(angle))), float32(math.Sin(float64(angle)))
+	return Mat4{
+		1, 0, 0, 0,
+		0, c, -s, 0,
+		0, s, c, 0,
+		0, 0, 0, 1,
+	}
+}
+
+func RotateZ(angle float32) Mat4 {
+	c, s := float32(math.Cos(float64(angle))), float32(math.Sin(float64(angle)))
+	return Mat4{
+		c, -s, 0, 0,
+		s, c, 0, 0,
+		0, 0, 1, 0,
 		0, 0, 0, 1,
 	}
 }
