@@ -36,6 +36,7 @@ func (t *Triangle) GetColor() sdl.Color {
 	return t.color
 }
 
+// * Assumption: Input Points are already Projected
 func (t *Triangle) FillTriangle(a, b, c Point) []*Point {
 	points := make([]*Point, 0)
 
@@ -43,50 +44,29 @@ func (t *Triangle) FillTriangle(a, b, c Point) []*Point {
 	top, z := UpperPoint(x, c)
 	mid, bottom := UpperPoint(y, z)
 
-	// top -> mid
-	// topMidSideXVal := InterpolateAlongLine(mid.Y, mid.X, top.Y, top.X)
-	// topMidSideZVal := InterpolateAlongLine(mid.Y, mid.Z, top.Y, top.Z)
-	// intensitiesOfTopMid := InterpolateAlongLine(float32(mid.Y), mid.Intensity, float32(top.Y), top.Intensity)
-
-	// topBottomSideXVal := InterpolateAlongLine(bottom.Y, bottom.X, top.Y, top.X)
-	// topBottomSideZVal := InterpolateAlongLine(bottom.Y, bottom.Z, top.Y, top.Z)
-	// intensitiesOfTopBottom := InterpolateAlongLine(float32(bottom.Y), bottom.Intensity, float32(top.Y), top.Intensity)
-
-	// midBottomSideXVal := InterpolateAlongLine(bottom.Y, bottom.X, mid.Y, mid.X)
-	// midBottomSideZVal := InterpolateAlongLine(bottom.Y, bottom.Z, mid.Y, mid.Z)
-	// intensitiesOfMidBottom := InterpolateAlongLine(float32(bottom.Y), bottom.Intensity, float32(mid.Y), mid.Intensity)
-
-	for i := 1; i <= int(top.Y-bottom.Y-1); i++ {
-		longSidePoint := LerpOnLine(bottom.Vec3, top.Vec3, float32(i)/(top.Y-bottom.Y-1))
+	idx := 0
+	for i := bottom.Y + 1; i <= top.Y; i++ {
+		longSidePoint := LerpOnLine(bottom.Vec3, top.Vec3,
+			(float32(idx))/Abs(top.Y-bottom.Y-1))
 
 		var otherSidePoint homocoord.Vec3
-		if i+int(bottom.Y) > int(mid.Y) {
-			otherSidePoint = LerpOnLine(mid.Vec3, top.Vec3, float32(i)/(top.Y-mid.Y-1))
+		if i > (mid.Y) {
+			otherSidePoint = LerpOnLine(mid.Vec3, top.Vec3,
+				(float32(idx)-Abs(mid.Y-bottom.Y))/Abs(top.Y-mid.Y-1),
+			)
 		} else {
-			otherSidePoint = LerpOnLine(bottom.Vec3, mid.Vec3, float32(i)/(mid.Y-bottom.Y-1))
+			otherSidePoint = LerpOnLine(
+				bottom.Vec3, mid.Vec3,
+				float32(idx)/Abs(mid.Y-bottom.Y-1),
+			)
 		}
 
 		points = append(points, NewLine(
 			*NewPointFromVec3(longSidePoint),
 			*NewPointFromVec3(otherSidePoint),
 		).Draw()...)
+		idx++
 	}
-
-	// idx := 0
-	// for i := bottom.Y + 1; i < top.Y; i++ {
-	// 	var longSidePoint, otherSidePoint Point
-
-	// 	if i > mid.Y {
-	// 		otherSidePoint = *NewPoint((topMidSideXVal[idx-int(mid.Y-bottom.Y)]), i, topMidSideZVal[idx-int(mid.Y-bottom.Y)], PointWithIntensity(intensitiesOfTopMid[idx-int(mid.Y-bottom.Y)]))
-	// 	} else {
-	// 		otherSidePoint = *NewPoint((midBottomSideXVal[idx]), i, midBottomSideZVal[idx], PointWithIntensity(intensitiesOfMidBottom[idx]))
-	// 	}
-
-	// 	longSidePoint = *NewPoint((topBottomSideXVal[idx]), i, topBottomSideZVal[idx], PointWithIntensity(intensitiesOfTopBottom[idx]))
-
-	// 	points = append(points, NewLine(longSidePoint, otherSidePoint).Draw()...)
-	// 	idx++
-	// }
 
 	return points
 }

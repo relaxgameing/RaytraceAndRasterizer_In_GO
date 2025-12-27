@@ -6,6 +6,13 @@ import (
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 )
 
+func Abs[T ~int | ~int32 | ~float32 | ~float64](a T) T {
+	if a < 0 {
+		return -a
+	}
+	return a
+}
+
 // pi radian = 180 deg
 func DegreeToRadian(degree float64) float64 {
 	return degree * (math.Pi / 180)

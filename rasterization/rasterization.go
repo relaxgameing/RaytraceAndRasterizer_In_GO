@@ -63,15 +63,11 @@ func Rasterization(e *editor.Editor) {
 				points = append(points, bc.Draw()...)
 				points = append(points, ca.Draw()...)
 
-				// drawLine(e.Renderer, curScene, pa, pb)
-				// drawLine(e.Renderer, curScene, pa, pc)
-				// drawLine(e.Renderer, curScene, pc, pb)
-
-				// points := tri.FillTriangle(
-				// 	*geom.NewPointFromVec3(pa.ScalarPrd(1 / pa.Z)),
-				// 	*geom.NewPointFromVec3(pb.ScalarPrd(1 / pb.Z)),
-				// 	*geom.NewPointFromVec3(pc.ScalarPrd(1 / pc.Z)),
-				// )
+				log.Info("Rasterization -> before fillTriangle", "len", len(points))
+				points = append(points, tri.FillTriangle(
+					a, b, c,
+				)...)
+				log.Info("Rasterization -> After fillTriangle", "len", len(points))
 				for _, point := range points {
 					drawPoint(e.Renderer, curScene, point.Vec3)
 				}
@@ -124,45 +120,3 @@ func drawPoint(renderer *sdl.Renderer, curScene *scene.RasterScene, a homo.Vec3)
 func setRendererDrawColor(r *sdl.Renderer, color sdl.Color) {
 	r.SetDrawColor(color.R, color.G, color.B, color.A)
 }
-
-// func fillTriangle(a, b, c homo.Vec3) []*homo.Vec3 {
-// 	points := make([]*geom.Point, 0)
-
-// 	x, y := homocoord.UpperPoint(a, b)
-// 	top, z := homocoord.UpperPoint(x, c)
-// 	mid, bottom := homocoord.UpperPoint(y, z)
-
-// 	// top -> mid
-// 	topMidSidePoints := geom.InterpolateAlongLine(mid.Y, mid.X, top.Y, top.X)
-
-// 	topBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, top.Y, top.X)
-
-// 	midBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, mid.Y, mid.X)
-
-// 	idx := 0
-// 	for i := bottom.Y + 1; i < top.Y; i++ {
-// 		var longSidePoint, otherSidePoint homo.Vec3
-
-// 		if i > mid.Y {
-// 			otherSidePoint = homocoord.Vec3{
-// 				X: topMidSidePoints[idx-int(mid.Y-bottom.Y)],
-// 				Y: i,
-// 			}
-// 		} else {
-// 			otherSidePoint = homocoord.Vec3{
-// 				X: midBottomSidePoints[idx],
-// 				Y: i,
-// 			}
-// 		}
-
-// 		longSidePoint = homocoord.Vec3{
-// 			X: topBottomSidePoints[idx],
-// 			Y: i,
-// 		}
-
-// 		points = append(points, NewLine(longSidePoint, otherSidePoint).Draw()...)
-// 		idx++
-// 	}
-
-// 	return points
-// }

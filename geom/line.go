@@ -79,7 +79,7 @@ func (l *Line) Draw() []*Point {
 	points = append(points, NewPoint(l.start.X, l.start.Y, l.start.Z))
 	points = append(points, NewPoint(l.end.X, l.end.Y, l.end.Z))
 	// more vertical
-	if math.Abs(float64(l.slope)) > 1 {
+	if math.Abs(float64(l.start.X-l.end.X)) < math.Abs(float64(l.start.Y-l.end.Y)) {
 		upper, lower := UpperPoint(l.start, l.end)
 		lineXVal := InterpolateAlongLine(lower.Y, lower.X, upper.Y, upper.X)
 		lineZVal := InterpolateAlongLine(lower.Y, lower.Z, upper.Y, upper.Z)
@@ -96,12 +96,8 @@ func (l *Line) Draw() []*Point {
 	}
 
 	left, right := LeftPoint(l.start, l.end)
-	// temp := InterpolateAlongLine(left.X, left.Y, right.X, right.Y)
-	// lineZVal := InterpolateAlongLine(left.Y, left.Z, right.Y, right.Z)
-	// intensities := InterpolateAlongLine(float32(left.X), left.Intensity, float32(right.X), right.Intensity)
-	// for i, p := range temp {
-	for i := 0; i < int(right.Y-left.Y-1); i++ {
-		t := float32(i) / (right.Y - left.Y - 1)
+	for i := 0; i < int(right.X-left.X-1); i++ {
+		t := float32(i) / (right.X - left.X - 1)
 		p := LerpOnLine(left.Vec3, right.Vec3, t)
 		intensity := Lerp(left.Intensity, right.Intensity, t)
 		points = append(points, NewPointFromVec3(p, PointWithIntensity(intensity)))
