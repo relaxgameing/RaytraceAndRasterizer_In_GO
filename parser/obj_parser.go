@@ -98,9 +98,9 @@ func (obj *ObjParser) parseFace(vertices []homocoord.Vec3, faceLine string) (geo
 	}
 
 	return *geom.NewTriangle(
-		vertices[x-1],
-		vertices[y-1],
-		vertices[z-1],
+		*geom.NewPoint(vertices[x-1].X, vertices[x-1].Y, vertices[x-1].Z),
+		*geom.NewPoint(vertices[y-1].X, vertices[y-1].Y, vertices[y-1].Z),
+		*geom.NewPoint(vertices[z-1].X, vertices[z-1].Y, vertices[z-1].Z),
 		obj.curColor,
 	), nil
 

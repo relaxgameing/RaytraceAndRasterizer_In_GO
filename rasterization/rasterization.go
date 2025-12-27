@@ -17,15 +17,6 @@ func Rasterization(e *editor.Editor) {
 
 	setRendererDrawColor(e.Renderer, common.ColorWhite)
 	e.Renderer.Clear()
-	// for _, shape := range curScene.GetShapes() {
-	// 	curColor := shape.GetColor()
-	// 	for _, p := range shape.Draw() {
-	// 		x, y := curScene.CanvasToSdl(p.X, p.Y)
-	// 		intensityColor := common.ChangeColorIntensity(curColor, p.Intensity)
-	// 		setRendererDrawColor(e.Renderer, intensityColor)
-	// 		e.Renderer.DrawPoint(int32(x), int32(y))
-	// 	}
-	// }
 
 	projectionMtx := scene.ProjectionViewport(float32(curScene.ViewPort.DistanceFromOrigin),
 		float32(curScene.Canvas.Width),
@@ -60,9 +51,30 @@ func Rasterization(e *editor.Editor) {
 			for _, tri := range subTriangles {
 				pa, pb, pc := transformAndProjectTriangle(tri, transformationMtx, projectionMtx)
 
-				drawLine(e.Renderer, curScene, pa, pb)
-				drawLine(e.Renderer, curScene, pa, pc)
-				drawLine(e.Renderer, curScene, pc, pb)
+				a := *geom.NewPointFromVec3(pa.ScalarPrd(1 / pa.Z))
+				b := *geom.NewPointFromVec3(pb.ScalarPrd(1 / pb.Z))
+				c := *geom.NewPointFromVec3(pc.ScalarPrd(1 / pc.Z))
+
+				points := make([]*geom.Point, 0)
+				ab := *geom.NewLine(a, b)
+				bc := *geom.NewLine(b, c)
+				ca := *geom.NewLine(c, a)
+				points = append(points, ab.Draw()...)
+				points = append(points, bc.Draw()...)
+				points = append(points, ca.Draw()...)
+
+				// drawLine(e.Renderer, curScene, pa, pb)
+				// drawLine(e.Renderer, curScene, pa, pc)
+				// drawLine(e.Renderer, curScene, pc, pb)
+
+				// points := tri.FillTriangle(
+				// 	*geom.NewPointFromVec3(pa.ScalarPrd(1 / pa.Z)),
+				// 	*geom.NewPointFromVec3(pb.ScalarPrd(1 / pb.Z)),
+				// 	*geom.NewPointFromVec3(pc.ScalarPrd(1 / pc.Z)),
+				// )
+				for _, point := range points {
+					drawPoint(e.Renderer, curScene, point.Vec3)
+				}
 			}
 
 		}
@@ -72,9 +84,9 @@ func Rasterization(e *editor.Editor) {
 }
 
 func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) (pa, pb, pc homo.Vec3) {
-	transformedA := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(0)))
-	transformedB := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(1)))
-	transformedC := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(2)))
+	transformedA := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(0).Vec3))
+	transformedB := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(1).Vec3))
+	transformedC := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(2).Vec3))
 
 	pa = homo.Mat3x4MulVec4(projectionMtx, transformedA)
 	pb = homo.Mat3x4MulVec4(projectionMtx, transformedB)
@@ -104,6 +116,53 @@ func drawLine(renderer *sdl.Renderer, curScene *scene.RasterScene, a, b homo.Vec
 	renderer.DrawLine(x1, y1, x2, y2)
 }
 
+func drawPoint(renderer *sdl.Renderer, curScene *scene.RasterScene, a homo.Vec3) {
+	x1, y1 := curScene.CanvasToSdl(int(a.X), int(a.Y))
+	renderer.DrawPoint(x1, y1)
+}
+
 func setRendererDrawColor(r *sdl.Renderer, color sdl.Color) {
 	r.SetDrawColor(color.R, color.G, color.B, color.A)
 }
+
+// func fillTriangle(a, b, c homo.Vec3) []*homo.Vec3 {
+// 	points := make([]*geom.Point, 0)
+
+// 	x, y := homocoord.UpperPoint(a, b)
+// 	top, z := homocoord.UpperPoint(x, c)
+// 	mid, bottom := homocoord.UpperPoint(y, z)
+
+// 	// top -> mid
+// 	topMidSidePoints := geom.InterpolateAlongLine(mid.Y, mid.X, top.Y, top.X)
+
+// 	topBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, top.Y, top.X)
+
+// 	midBottomSidePoints := geom.InterpolateAlongLine(bottom.Y, bottom.X, mid.Y, mid.X)
+
+// 	idx := 0
+// 	for i := bottom.Y + 1; i < top.Y; i++ {
+// 		var longSidePoint, otherSidePoint homo.Vec3
+
+// 		if i > mid.Y {
+// 			otherSidePoint = homocoord.Vec3{
+// 				X: topMidSidePoints[idx-int(mid.Y-bottom.Y)],
+// 				Y: i,
+// 			}
+// 		} else {
+// 			otherSidePoint = homocoord.Vec3{
+// 				X: midBottomSidePoints[idx],
+// 				Y: i,
+// 			}
+// 		}
+
+// 		longSidePoint = homocoord.Vec3{
+// 			X: topBottomSidePoints[idx],
+// 			Y: i,
+// 		}
+
+// 		points = append(points, NewLine(longSidePoint, otherSidePoint).Draw()...)
+// 		idx++
+// 	}
+
+// 	return points
+// }

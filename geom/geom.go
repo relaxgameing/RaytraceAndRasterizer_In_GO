@@ -20,7 +20,7 @@ func Swap[T ~int | ~float32 | ~float64](x, y T) (T, T) {
 }
 
 // A + (B - A)T
-func Interpolate[T ~int | ~float32 | ~float64](start, end T, step float32) float32 {
+func Lerp[T ~int | ~float32 | ~float64](start, end T, step float32) float32 {
 	s, e := float32(start), float32(end)
 	return s + (e-s)*step
 }

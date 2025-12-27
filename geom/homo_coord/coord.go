@@ -42,6 +42,22 @@ func (v *Vec3) ScalarPrd(factor float32) Vec3 {
 	}
 }
 
+// * returns the point more towards the left
+func LeftPoint(p1, p2 Vec3) (left, right Vec3) {
+	if p1.X < p2.X {
+		return p1, p2
+	}
+	return p2, p1
+}
+
+// *returns the point more towards the top
+func UpperPoint(p1, p2 Vec3) (upper, lower Vec3) {
+	if p1.Y >= p2.Y {
+		return p1, p2
+	}
+	return p2, p1
+}
+
 // Translation matrix
 func Translation(tx, ty, tz float32) Mat4 {
 	return Mat4{1, 0, 0, tx, 0, 1, 0, ty, 0, 0, 1, tz, 0, 0, 0, 1}

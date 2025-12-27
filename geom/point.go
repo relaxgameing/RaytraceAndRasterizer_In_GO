@@ -2,20 +2,41 @@ package geom
 
 import (
 	"math"
+
+	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 )
 
 type Point struct {
-	X         int
-	Y         int
+	homocoord.Vec3
 	Intensity float32
 }
 
 type PointOption func(*Point)
 
-func NewPoint(x int, y int, options ...PointOption) *Point {
+func NewPoint(x, y, z float32, options ...PointOption) *Point {
 	p := &Point{
-		x,
-		y,
+		homocoord.Vec3{
+			X: (x),
+			Y: (y),
+			Z: z,
+		},
+		1,
+	}
+
+	for _, op := range options {
+		op(p)
+	}
+
+	return p
+}
+
+func NewPointFromVec3(v homocoord.Vec3, options ...PointOption) *Point {
+	p := &Point{
+		homocoord.Vec3{
+			X: v.X,
+			Y: v.Y,
+			Z: v.Z,
+		},
 		1,
 	}
 

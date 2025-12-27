@@ -67,9 +67,9 @@ func NewRasterizationRequirements() *OptionRequirement {
 	)
 	scene.AddSceneEntities(
 		shape.NewTriangle(
-			*geom.NewPoint(-50, -200),
-			*geom.NewPoint(50, -200),
-			*geom.NewPoint(-50, 200),
+			*geom.NewPoint(-50, -200, 2),
+			*geom.NewPoint(50, -200, 3),
+			*geom.NewPoint(-50, 200, 4),
 		),
 	)
 	return &OptionRequirement{
