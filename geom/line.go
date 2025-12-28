@@ -98,9 +98,15 @@ func (l *Line) Draw() []*Point {
 	left, right := LeftPoint(l.start, l.end)
 	for i := 0; i < int(right.X-left.X-1); i++ {
 		t := float32(i) / (right.X - left.X - 1)
-		p := LerpOnLine(left.Vec3, right.Vec3, t)
+		// p := LerpOnLine(left.Vec3, right.Vec3, t)
+		lineYVal := InterpolateAlongLine(left.X, left.Y, right.X, right.Y)
+		lineZVal := InterpolateAlongLine(left.X, left.Z, right.X, right.Z)
 		intensity := Lerp(left.Intensity, right.Intensity, t)
-		points = append(points, NewPointFromVec3(p, PointWithIntensity(intensity)))
+		points = append(points, NewPoint(
+			left.X+float32(i),
+			lineYVal[i],
+			lineZVal[i],
+			PointWithIntensity(intensity)))
 	}
 	return points
 }

@@ -49,46 +49,61 @@ func Rasterization(e *editor.Editor) {
 			}
 
 			for _, tri := range subTriangles {
-				pa, pb, pc := transformAndProjectTriangle(tri, transformationMtx, projectionMtx)
-
-				a := *geom.NewPointFromVec3(pa.ScalarPrd(1 / pa.Z))
-				b := *geom.NewPointFromVec3(pb.ScalarPrd(1 / pb.Z))
-				c := *geom.NewPointFromVec3(pc.ScalarPrd(1 / pc.Z))
-
-				points := make([]*geom.Point, 0)
-				ab := *geom.NewLine(a, b)
-				bc := *geom.NewLine(b, c)
-				ca := *geom.NewLine(c, a)
-				points = append(points, ab.Draw()...)
-				points = append(points, bc.Draw()...)
-				points = append(points, ca.Draw()...)
-
-				log.Info("Rasterization -> before fillTriangle", "len", len(points))
-				points = append(points, tri.FillTriangle(
-					a, b, c,
-				)...)
-				log.Info("Rasterization -> After fillTriangle", "len", len(points))
-				for _, point := range points {
-					drawPoint(e.Renderer, curScene, point.Vec3)
-				}
+				drawTriangle(curScene, e.Renderer, tri, transformationMtx, projectionMtx)
 			}
 
 		}
 	}
 
+	curScene.ResetDepthBuffer()
 	e.Renderer.Present()
 }
 
-func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) (pa, pb, pc homo.Vec3) {
-	transformedA := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(0).Vec3))
-	transformedB := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(1).Vec3))
-	transformedC := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(triangle.GetVertex(2).Vec3))
+func drawTriangle(curScene *scene.RasterScene, renderer *sdl.Renderer, tri geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) {
+	pa, pb, pc := transformAndProjectTriangle(tri, transformationMtx, projectionMtx)
 
-	pa = homo.Mat3x4MulVec4(projectionMtx, transformedA)
-	pb = homo.Mat3x4MulVec4(projectionMtx, transformedB)
-	pc = homo.Mat3x4MulVec4(projectionMtx, transformedC)
+	a := *geom.NewPoint(pa.X/pa.Z, pa.Y/pa.Z, pa.Z)
+	b := *geom.NewPoint(pb.X/pb.Z, pb.Y/pb.Z, pb.Z)
+	c := *geom.NewPoint(pc.X/pc.Z, pc.Y/pc.Z, pc.Z)
+
+	points := make([]*geom.Point, 0)
+	ab := *geom.NewLine(a, b)
+	bc := *geom.NewLine(b, c)
+	ca := *geom.NewLine(c, a)
+	points = append(points, ab.Draw()...)
+	points = append(points, bc.Draw()...)
+	points = append(points, ca.Draw()...)
+
+	//? all the points are still in world coord
+	points = append(points, tri.FillTriangle(
+		a, b, c,
+	)...)
+
+	for _, point := range points {
+		// pp := transformAndProjectPoint(*point, transformationMtx, projectionMtx)
+		pp := point
+		if curScene.DepthBufferAt(int(pp.X), int(pp.Y)) < (1 / pp.Z) {
+			setRendererDrawColor(renderer, tri.GetColor())
+			drawPoint(renderer, curScene, pp.Vec3)
+			curScene.SetDepthBufferAt(int(pp.X), int(pp.Y), 1/pp.Z)
+		}
+	}
+}
+
+func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) (pa, pb, pc homo.Vec3) {
+
+	pa = transformAndProjectPoint(triangle.GetVertex(0), transformationMtx, projectionMtx)
+	pb = transformAndProjectPoint(triangle.GetVertex(1), transformationMtx, projectionMtx)
+	pc = transformAndProjectPoint(triangle.GetVertex(2), transformationMtx, projectionMtx)
 
 	return pa, pb, pc
+}
+
+// * returns point on canvas with z value from world coord
+func transformAndProjectPoint(point geom.Point, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) homo.Vec3 {
+	transformedPoint := homo.Mat4MulVec4(transformationMtx, homo.Vec3ToHomogeneous(point.Vec3))
+
+	return homo.Mat3x4MulVec4(projectionMtx, transformedPoint)
 }
 
 func modelTransformation(model *eScene.ModelInstance, camera *eScene.Camera) homo.Mat4 {

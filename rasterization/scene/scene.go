@@ -1,16 +1,24 @@
 package scene
 
 import (
+	"math"
+
 	"github.com/relaxgameing/computerGraphics/editor/scene"
 	viewfrustum "github.com/relaxgameing/computerGraphics/editor/scene/view_frustum"
 	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/relaxgameing/computerGraphics/rasterization/scene/shape"
 )
 
+const (
+	CANVAS_WIDTH  = 800
+	CANVAS_HEIGHT = 600
+)
+
 type RasterScene struct {
 	scene.BaseScene
 	scene.SceneObjects
-	shapes []shape.Shape
+	shapes      []shape.Shape
+	depthBuffer []float32
 }
 
 type sceneOptions func(s *RasterScene)
@@ -28,13 +36,15 @@ func NewRasterScene(opt ...sceneOptions) *RasterScene {
 				Height:             1,
 				DistanceFromOrigin: 1,
 			},
-			ViewCamera: scene.NewCamera(homocoord.Vec3{0, 0, 0},
-				homocoord.Vec3{0, 0, 1},
-				homocoord.Vec3{0, 1, 0},
+			ViewCamera: scene.NewCamera(
+				homocoord.Vec3{X: 0, Y: 0, Z: 0},
+				homocoord.Vec3{X: 0, Y: 0, Z: 1},
+				homocoord.Vec3{X: 0, Y: 1, Z: 0},
 				homocoord.IdentityMat4(),
 			),
 			ViewFrustum: viewfrustum.New5PlaneFrustum(),
 		},
+		depthBuffer: make([]float32, CANVAS_WIDTH*CANVAS_HEIGHT),
 	}
 
 	for _, op := range opt {
@@ -86,6 +96,28 @@ func (s *RasterScene) GetShapes() []shape.Shape {
 
 func (s *RasterScene) AddSceneEntities(entities ...shape.Shape) {
 	s.shapes = append(s.shapes, entities...)
+}
+
+func (s *RasterScene) ResetDepthBuffer() {
+	s.depthBuffer = make([]float32, s.GetCanvasWidth()*s.GetCanvasHeight())
+}
+
+func (s *RasterScene) DepthBufferAt(x, y int) float32 {
+	i, j := s.CanvasToSdl(x, y)
+	// log.Info("checking point", i, j, x, y)
+	if !s.PointInsideCanvas(int(i), int(j)) {
+		return math.MaxFloat32
+	}
+	return s.depthBuffer[int(i)*s.GetCanvasHeight()+int(j)]
+}
+
+func (s *RasterScene) SetDepthBufferAt(x, y int, val float32) {
+	i, j := s.CanvasToSdl(x, y)
+	if !s.PointInsideCanvas(int(i), int(j)) {
+		// log.Error("RasterScene -> SetDepthBufferAt", x, y, "point outside canvas")
+		return
+	}
+	s.depthBuffer[int(i)*s.GetCanvasHeight()+int(j)] = val
 }
 
 // It projects the world point on to the viewport and then to the canvas all at once

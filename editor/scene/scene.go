@@ -54,3 +54,9 @@ func (b *BaseScene) GetCanvas() *Canvas              { return &b.Canvas }
 func (b *BaseScene) GetViewPort() *ViewPort          { return &b.ViewPort }
 func (b *BaseScene) GetCamera() *Camera              { return b.ViewCamera }
 func (b *BaseScene) GetViewFrustum() *vf.ViewFrustum { return &b.ViewFrustum }
+func (b *BaseScene) PointInsideCanvas(x, y int) bool {
+	if x < 0 || x >= b.Canvas.Width || y < 0 || y >= b.Canvas.Height {
+		return false
+	}
+	return true
+}
