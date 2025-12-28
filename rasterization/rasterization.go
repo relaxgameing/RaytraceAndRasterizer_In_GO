@@ -66,6 +66,11 @@ func drawTriangle(curScene *scene.RasterScene, renderer *sdl.Renderer, tri geom.
 	b := *geom.NewPoint(pb.X/pb.Z, pb.Y/pb.Z, pb.Z)
 	c := *geom.NewPoint(pc.X/pc.Z, pc.Y/pc.Z, pc.Z)
 
+	//? back face culling
+	if !isFacingTowardsCamera(a, b, c) {
+		return
+	}
+
 	points := make([]*geom.Point, 0)
 	ab := *geom.NewLine(a, b)
 	bc := *geom.NewLine(b, c)
@@ -79,15 +84,23 @@ func drawTriangle(curScene *scene.RasterScene, renderer *sdl.Renderer, tri geom.
 		a, b, c,
 	)...)
 
-	for _, point := range points {
-		// pp := transformAndProjectPoint(*point, transformationMtx, projectionMtx)
-		pp := point
+	for _, pp := range points {
 		if curScene.DepthBufferAt(int(pp.X), int(pp.Y)) < (1 / pp.Z) {
 			setRendererDrawColor(renderer, tri.GetColor())
 			drawPoint(renderer, curScene, pp.Vec3)
 			curScene.SetDepthBufferAt(int(pp.X), int(pp.Y), 1/pp.Z)
 		}
 	}
+}
+
+// * Assumption: Clockwise faces
+func isFacingTowardsCamera(a, b, c geom.Point) bool {
+	ab := b.Subtract(a.Vec3)
+	ac := c.Subtract(a.Vec3)
+
+	normal := ab.Cross(ac).UnitVector()
+
+	return a.UnitVector().Dot(normal) <= 0
 }
 
 func transformAndProjectTriangle(triangle geom.Triangle, transformationMtx homo.Mat4, projectionMtx homo.Mat3x4) (pa, pb, pc homo.Vec3) {
