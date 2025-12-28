@@ -76,8 +76,8 @@ func (l *Line) ComputeYForX(x int) float32 {
 // * shape Interface
 func (l *Line) Draw() []*Point {
 	points := make([]*Point, 0)
-	points = append(points, NewPoint(l.start.X, l.start.Y, l.start.Z))
-	points = append(points, NewPoint(l.end.X, l.end.Y, l.end.Z))
+	// points = append(points, NewPoint(l.start.X, l.start.Y, l.start.Z))
+	// points = append(points, NewPoint(l.end.X, l.end.Y, l.end.Z))
 	// more vertical
 	if math.Abs(float64(l.start.X-l.end.X)) < math.Abs(float64(l.start.Y-l.end.Y)) {
 		upper, lower := UpperPoint(l.start, l.end)
@@ -96,17 +96,15 @@ func (l *Line) Draw() []*Point {
 	}
 
 	left, right := LeftPoint(l.start, l.end)
-	for i := 0; i < int(right.X-left.X-1); i++ {
-		t := float32(i) / (right.X - left.X - 1)
-		// p := LerpOnLine(left.Vec3, right.Vec3, t)
-		lineYVal := InterpolateAlongLine(left.X, left.Y, right.X, right.Y)
-		lineZVal := InterpolateAlongLine(left.X, left.Z, right.X, right.Z)
-		intensity := Lerp(left.Intensity, right.Intensity, t)
+	lineYVal := InterpolateAlongLine(left.X, left.Y, right.X, right.Y)
+	lineZVal := InterpolateAlongLine(left.X, left.Z, right.X, right.Z)
+	intensities := InterpolateAlongLine(float32(left.X), left.Intensity, float32(right.X), right.Intensity)
+	for i, y := range lineYVal {
 		points = append(points, NewPoint(
 			left.X+float32(i),
-			lineYVal[i],
+			y,
 			lineZVal[i],
-			PointWithIntensity(intensity)))
+			PointWithIntensity(intensities[i])))
 	}
 	return points
 }

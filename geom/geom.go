@@ -43,7 +43,7 @@ func InterpolateAlongLine[T ~int | ~float32 | ~float64](i1, d1, i2, d2 T) []floa
 	prev := float32(d1)
 
 	points := make([]float32, 0)
-	for i := i1; i < i2; i++ {
+	for i := i1; i <= i2; i++ {
 		points = append(points, prev)
 		prev = prev + slope
 	}

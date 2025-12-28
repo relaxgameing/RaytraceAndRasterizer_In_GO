@@ -1,7 +1,6 @@
 package geom
 
 import (
-	homocoord "github.com/relaxgameing/computerGraphics/geom/homo_coord"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -44,26 +43,23 @@ func (t *Triangle) FillTriangle(a, b, c Point) []*Point {
 	top, z := UpperPoint(x, c)
 	mid, bottom := UpperPoint(y, z)
 
+	longSideXPoints := InterpolateAlongLine(bottom.Y, bottom.X, top.Y, top.X)
+	longSideZPoints := InterpolateAlongLine(bottom.Y, bottom.Z, top.Y, top.Z)
+
+	topMidXPoints := InterpolateAlongLine(mid.Y, mid.X, top.Y, top.X)
+	topMidZPoints := InterpolateAlongLine(mid.Y, mid.Z, top.Y, top.Z)
+
+	midBottomXPoints := InterpolateAlongLine(bottom.Y, bottom.X, mid.Y, mid.X)
+	midBottomZPoints := InterpolateAlongLine(bottom.Y, bottom.Z, mid.Y, mid.Z)
+
+	otherSideXPoints := append(midBottomXPoints, topMidXPoints...)
+	otherSideZPoints := append(midBottomZPoints, topMidZPoints...)
+
 	idx := 0
-	for i := bottom.Y + 1; i <= top.Y; i++ {
-		longSidePoint := LerpOnLine(bottom.Vec3, top.Vec3,
-			(float32(idx))/Abs(top.Y-bottom.Y-1))
-
-		var otherSidePoint homocoord.Vec3
-		if i > (mid.Y) {
-			otherSidePoint = LerpOnLine(mid.Vec3, top.Vec3,
-				(float32(idx)-Abs(mid.Y-bottom.Y))/Abs(top.Y-mid.Y-1),
-			)
-		} else {
-			otherSidePoint = LerpOnLine(
-				bottom.Vec3, mid.Vec3,
-				float32(idx)/Abs(mid.Y-bottom.Y-1),
-			)
-		}
-
+	for i := bottom.Y; i <= top.Y; i++ {
 		points = append(points, NewLine(
-			*NewPointFromVec3(longSidePoint),
-			*NewPointFromVec3(otherSidePoint),
+			*NewPoint(longSideXPoints[idx], i, longSideZPoints[idx]),
+			*NewPoint(otherSideXPoints[idx], i, otherSideZPoints[idx]),
 		).Draw()...)
 		idx++
 	}
