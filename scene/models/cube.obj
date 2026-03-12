@@ -1,0 +1,37 @@
+# Cube.obj - 8 vertices, 12 colored triangles
+# Generated from scene description
+name cube
+# Vertices (v x y z)
+v  1.000000  1.000000  1.000000
+v -1.000000  1.000000  1.000000
+v -1.000000 -1.000000  1.000000
+v  1.000000 -1.000000  1.000000
+v  1.000000  1.000000 -1.000000
+v -1.000000  1.000000 -1.000000
+v -1.000000 -1.000000 -1.000000
+v  1.000000 -1.000000 -1.000000
+
+# Materials (simple per-face colors via usemtl)
+usemtl red
+f 1 2 3
+f 1 3 4
+
+usemtl green
+f 5 1 4
+f 5 4 8
+
+usemtl blue
+f 5 6 7 
+f 5 8 7
+
+usemtl yellow
+f 2 6 7
+f 2 7 3
+
+usemtl purple
+f 5 2 1
+f 5 2 6
+
+usemtl cyan
+f 3 7 8
+f 3 8 4

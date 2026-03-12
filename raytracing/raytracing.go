@@ -5,14 +5,14 @@ import (
 
 	"github.com/relaxgameing/computerGraphics/editor"
 	"github.com/relaxgameing/computerGraphics/geom"
-	"github.com/relaxgameing/computerGraphics/scene"
-	"github.com/relaxgameing/computerGraphics/scene/entity"
-	"github.com/relaxgameing/computerGraphics/scene/light"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/entity"
+	"github.com/relaxgameing/computerGraphics/raytracing/scene/light"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 func RayTracing(e *editor.Editor) {
-	curScene := e.Scene
+	curScene := e.Scene.(*scene.RayScene)
 
 	for i := -curScene.Canvas.Width / 2; i <= curScene.Canvas.Width/2; i++ {
 		for j := -curScene.Canvas.Height / 2; j <= curScene.Canvas.Height/2; j++ {
@@ -41,24 +41,26 @@ func ScalarProductColor(color sdl.Color, factor float32) *sdl.Color {
 	}
 }
 
-func generateViewPortRay(s *scene.Scene, i int, j int) *geom.Ray {
+func generateViewPortRay(s *scene.RayScene, i int, j int) *geom.Ray {
 	vx, vy := s.CanvasToViewPort(i, j)
-	sceneOrigin := geom.WorldPoint{X: 0, Y: 0, Z: 0}
+
+	cameraPosition := s.ViewCamera.GetPosition()
+	cameraRotation := s.ViewCamera.GetRotation()
 
 	var curRay geom.Ray = geom.Ray{
-		Point:  sceneOrigin,
+		Point:  cameraPosition,
 		Lambda: 1e6,
 		DirectionVector: *geom.NewVector(geom.WorldPoint{
-			X: vx,
-			Y: vy,
-			Z: float32(s.ViewPort.DistanceFromOrigin)},
-			sceneOrigin),
+			X: cameraPosition.X + vx,
+			Y: cameraPosition.Y + vy,
+			Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
+			cameraPosition).Rotate(cameraRotation),
 	}
 
 	return &curRay
 }
 
-func traceRay(ray *geom.Ray, curScene *scene.Scene, rayDept int) (color sdl.Color) {
+func traceRay(ray *geom.Ray, curScene *scene.RayScene, rayDept int) (color sdl.Color) {
 	var colorOfViewPort sdl.Color = sdl.Color{R: 0, G: 0, B: 0, A: 0}
 
 	if rayDept == 0 {
@@ -118,7 +120,7 @@ func getClosestEntityOnPathOfRay(
 }
 
 func computeLightIntensityAtPoint(
-	scene *scene.Scene,
+	scene *scene.RayScene,
 	point geom.WorldPoint,
 	normalVector geom.Vector,
 	specular float32,

@@ -3,7 +3,7 @@ package editor
 import (
 	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
-	"github.com/relaxgameing/computerGraphics/scene"
+	"github.com/relaxgameing/computerGraphics/editor/scene"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -20,7 +20,7 @@ type Editor struct {
 	Window   *sdl.Window
 	Renderer *sdl.Renderer
 
-	Scene *scene.Scene
+	Scene scene.Scene
 
 	State EditorState
 }
@@ -39,7 +39,7 @@ func (e *Editor) DeInitEditor() {
 }
 
 // Todo: Dependency Injection for configuration of Editor
-func NewEditor() *Editor {
+func NewEditor(scene scene.Scene) *Editor {
 	window, renderer, err := sdl.CreateWindowAndRenderer(800, 600, sdl.WINDOW_SHOWN)
 	if err != nil {
 		log.Error(err)
@@ -54,6 +54,6 @@ func NewEditor() *Editor {
 		Window:   window,
 		Renderer: renderer,
 		State:    Active,
-		Scene:    scene.NewScene("RayTracing"),
+		Scene:    scene,
 	}
 }
