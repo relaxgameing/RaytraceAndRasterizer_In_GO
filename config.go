@@ -33,18 +33,48 @@ func NewRayTracingRequirements() *OptionRequirement {
 	)
 	scene.AddSceneEntities(
 		entity.NewSphere(
-			geom.WorldPoint{0, -1, 3},
+			geom.WorldPoint{
+				X: 0.0,
+				Y: -1.0,
+				Z: 3.0,
+			},
 			1,
 			common.ColorRed,
 			500,
-			0.2,
+			0.3,
 		),
 		entity.NewSphere(
-			geom.WorldPoint{0, -5001, 3},
+			geom.WorldPoint{
+				X: 2.0,
+				Y: 0.0,
+				Z: 4.0,
+			},
+			1,
+			common.ColorBlue,
+			500,
+			0.3,
+		),
+		entity.NewSphere(
+			geom.WorldPoint{
+				X: -2.0,
+				Y: 0.0,
+				Z: 4.0,
+			},
+			1,
+			common.ColorGreen,
+			10,
+			0.4,
+		),
+		entity.NewSphere(
+			geom.WorldPoint{
+				X: 0.0,
+				Y: -5001.0,
+				Z: 0.0,
+			},
 			5000,
 			common.ColorYellow,
-			500,
-			0.2,
+			1000,
+			0.5,
 		),
 	)
 	return &OptionRequirement{
