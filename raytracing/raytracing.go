@@ -54,9 +54,7 @@ func generateViewPortRay(s *scene.RayScene, i int, j int) *geom.Ray {
 		DirectionVector: *geom.NewVector(geom.WorldPoint{
 			X: cameraPosition.X + vx,
 			Y: cameraPosition.Y + vy,
-			// Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
-			// cameraPosition).Rotate(cameraRotation),
-			Z: cameraPosition.Z},
+			Z: cameraPosition.Z + float32(s.ViewPort.DistanceFromOrigin)},
 			geom.WorldPoint{X: 0, Y: 0, Z: 0}),
 	}
 

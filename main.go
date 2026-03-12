@@ -35,7 +35,9 @@ func main() {
 		},
 		sdl.KEYDOWN: func(event sdl.Event) {
 			keyEvent := event.(*sdl.KeyboardEvent)
-
+			if op.Technique == RayTracing {
+				return
+			}
 			camera := e.Scene.GetCamera()
 			switch sdl.GetKeyName(keyEvent.Keysym.Sym) {
 			case "W":
